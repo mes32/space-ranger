@@ -5,12 +5,14 @@ Vertical scrolling shooter (shmup) in space/pygame
 Clone this repository using git or download and unzip
 
 ## Requirements
-This program was devoloped using Python version 2.7.8 and pygame version 2.7. However it may run using other versions of Python or pygame.
+This program was devoloped using Python version 2.7.8 and [pygame](http://www.pygame.org/wiki/about) version 2.7. However, it might run using other versions of Python or pygame.
+
+You will definitely need a copy of pygame installed along with its prerequisites. See [pygame.org](http://www.pygame.org).
 
 ## To Run the Game
-Change directory to main space-ranger folder:
+Change directory to your main space-ranger folder:
 
-`cd <space-ranger dir>`
+`cd ./space-ranger/`
 
 Launch the start_game.py script with Python:
 
