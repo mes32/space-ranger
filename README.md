@@ -11,6 +11,11 @@ This program was devoloped using Python version 2.7.8 and pygame version 2.7. Ho
 cd <space-ranger directory>
 python start_game.py
 
+## About the Game
+This game is currently a single infinite level. While lacks any sort of depth of play, it can be pretty fun in small doses. It is possibly a good diversion during a coffee break.
+
+Evade asteroids as long as you can. Collect the greenish gems to increase your score. Shield powerups will replenish some of your spaceship's shields. Your highest score achieved is tracked, but this does not persist from one program session to the next.
+
 ## Licence
 Copyright 2015 Michael Stockman. Some rights reserved.
 
