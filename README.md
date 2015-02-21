@@ -12,7 +12,7 @@ Change directory to main space-ranger folder:
 
 `cd <space-ranger dir>`
 
-Launch the main game script with Python:
+Launch the start_game.py script with Python:
 
 `python start_game.py`
 
