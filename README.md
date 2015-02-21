@@ -8,8 +8,13 @@ Clone this repository using git or download and unzip
 This program was devoloped using Python version 2.7.8 and pygame version 2.7. However it may run using other versions of Python or pygame.
 
 ## To Run the Game
-cd <space-ranger directory>
-python start_game.py
+Change directory to main space-ranger folder:
+
+`cd <space-ranger dir>`
+
+Launch the main game script with Python:
+
+`python start_game.py`
 
 ## About the Game
 This game is currently a single infinite level. While it lacks much depth of play, it can be pretty fun in small doses. It is possibly a good diversion during a coffee break.
