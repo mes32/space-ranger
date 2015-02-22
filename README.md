@@ -1,6 +1,8 @@
 # space-ranger
 Vertical scrolling shooter (shmup) in space/pygame
 
+![Screen Shot](./screenshots/screenshot_001.png)
+
 ## Install
 Clone this repository using git or download and unzip
 
