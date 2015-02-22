@@ -226,7 +226,7 @@ while True:
             elif slowCheat:
                 b['rect'].move_ip(0, 1)
 
-         # Delete baddies that have fallen past the bottom.
+        # Delete baddies that have fallen past the bottom.
         for b in baddies[:]:
             if b['rect'].top > WINDOW_HEIGHT:
                 baddies.remove(b)
