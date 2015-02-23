@@ -17,7 +17,7 @@ PLAYER_SPEED = 5
 
 SHOT_ADD_RATE = 6
 SHOT_SPEED = 10
-DAMAGE_PER_SHOT = 6  # originally 3 DAMAGE per shot
+DAMAGE_PER_SHOT = 5  # originally 3 DAMAGE per shot
 
 POWERUP_SPEED_MIN = 1
 POWERUP_SPEED_MAX = 4
@@ -37,11 +37,11 @@ def waitForPlayerToPressKey():
                     terminate()
                 return
 
-def playerHasHitBaddie(playerRect, baddies):
-    for b in baddies:
-        if playerRect.colliderect(b['rect']):
-            baddies.remove(b)
-            return b['mass']
+def playerHasHitAstroid(playerHitbox, astroidList):
+    for a in astroidList:
+        if playerHitbox.colliderect(a['rect']):
+            astroidList.remove(a)
+            return a['mass']
     return 0
 
 def drawText(text, font, surface, x, y):
@@ -50,35 +50,38 @@ def drawText(text, font, surface, x, y):
     textrect.topleft = (x, y)
     surface.blit(textobj, textrect)
 
-# set up pygame, the window, and the mouse cursor
+# Set up pygame, the window, and the mouse cursor
 pygame.init()
 mainClock = pygame.time.Clock()
 windowSurface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption('Space Ranger')
 pygame.mouse.set_visible(False)
 
-# set up fonts
+# Set up fonts
 font = pygame.font.SysFont(None, 32)
 
-# set up sounds
+# Set up sounds
 #gameOverSound = pygame.mixer.Sound('gameover.wav')
 #pygame.mixer.music.load('background.mid')
 
-# set up images
+# Set up player images
 playerImageStandard = pygame.image.load('./resources/images/playerSpaceship.png')
 playerImageHit = pygame.image.load('./resources/images/playerSpaceshipHit.png')
-playerImageExploded = pygame.image.load('./resources/images/playerSpaceshipExplosion.png')
+playerImageExplosion = pygame.image.load('./resources/images/playerSpaceshipExplosion.png')
 playerImage = playerImageStandard
-playerRect = playerImage.get_rect()
-baddieImage = pygame.image.load('./resources/images/astroid.png')
-baddieImage3 = pygame.image.load('./resources/images/astroidExplosion.png')
-shotImage = pygame.image.load('./resources/images/shot.png')
+playerHitbox = playerImage.get_rect()
+playerShotImage = pygame.image.load('./resources/images/shot.png')
 
-powerUpShieldImage = pygame.image.load('./resources/images/powerupShield.png')
-powerUpPlusImage = pygame.image.load('./resources/images/powerupAstroidCore.png')
+# Set up astroid images
+astroidImage = pygame.image.load('./resources/images/astroid.png')
+astroidImageExplosion = pygame.image.load('./resources/images/astroidExplosion.png')
+
+# Set up powerup images
+shieldPowerupImage = pygame.image.load('./resources/images/powerupShield.png')
+gemPowerupImage = pygame.image.load('./resources/images/powerupAstroidCore.png')
 
 
-# show the "Start" screen
+# Show the "Start" screen
 shields = 100
 drawText('Space Ranger', font, windowSurface, (WINDOW_WIDTH / 3), (WINDOW_HEIGHT / 3))
 drawText('Press a key to start.', font, windowSurface, (WINDOW_WIDTH / 3) - 30, (WINDOW_HEIGHT / 3) + 50)
@@ -88,21 +91,24 @@ waitForPlayerToPressKey()
 
 topScore = 0
 while True:
-    # set up the start of the game
-    baddies = []
-    shots = []
-    powerUps = []
-    explosions = []
+    # Set up the start of the game
+    astroidList = []
+    shotList = []
+    powerupList = []
+    explosionList = []
+
     score = 0
     hitBlink = 0
     playerImage = playerImageStandard
-    playerRect.topleft = (WINDOW_WIDTH / 2, WINDOW_HEIGHT - 50)
+    playerHitbox.topleft = (WINDOW_WIDTH / 2, WINDOW_HEIGHT - 50)
     moveLeft = moveRight = moveUp = moveDown = False
     reverseCheat = slowCheat = False
+
     scoreAddCounter = 0
     baddieAddCounter = 0
     shotAddCounter = 0
     powerUpAddCounter = 0
+
     shields = 100
     playerDestroyed = False
     #pygame.mixer.music.play(-1, 0.0)
@@ -156,10 +162,10 @@ while True:
                     moveDown = False
 
             if event.type == MOUSEMOTION:
-                # If the mouse moves, move the player where the cursor is.
-                playerRect.move_ip(event.pos[0] - playerRect.centerx, event.pos[1] - playerRect.centery)
+                # Move the player avatar with mouse cursor if needed
+                playerHitbox.move_ip(event.pos[0] - playerHitbox.centerx, event.pos[1] - playerHitbox.centery)
 
-        # Add new baddies at the top of the screen, if needed.
+        # Add new astroids at the top of the screen as needed
         if not reverseCheat and not slowCheat:
             baddieAddCounter += 1
         if baddieAddCounter == ASTROID_ADD_RATE:
@@ -168,107 +174,107 @@ while True:
             newBaddie = {'rect': pygame.Rect(random.randint(0, WINDOW_WIDTH-baddieSize), 0 - baddieSize, baddieSize, baddieSize),
                         'speed': random.randint(ASTROID_SPEED_MIN, ASTROID_SPEED_MAX),
                         'size': baddieSize,
-                        'surface': pygame.transform.scale(baddieImage, (baddieSize, baddieSize)),
+                        'surface': pygame.transform.scale(astroidImage, (baddieSize, baddieSize)),
                         'mass': int(baddieSize^3),
                         'health': int(baddieSize^3),
                         }
 
-            baddies.append(newBaddie)
+            astroidList.append(newBaddie)
 
-        # Add new powerUp at the top of the screen, if needed.
+        # Add new powerUp at the top of the screen, if needed
         powerUpAddCounter += 1
         if powerUpAddCounter == POWERUP_ADD_RATE:
             powerUpAddCounter = 0
             powerUpType = random.randint(0,4)
             if powerUpType == 1 or (shields < 30 and (powerUpType == 2 or powerUpType == 3)):
-                powerUpSize = powerUpShieldImage.get_width()
+                powerUpSize = shieldPowerupImage.get_width()
                 newPowerUp = {'rect': pygame.Rect(random.randint(0, WINDOW_WIDTH-powerUpSize), 0 - powerUpSize, powerUpSize, powerUpSize),
                               'speed': random.randint(POWERUP_SPEED_MIN, POWERUP_SPEED_MAX),
-                              'surface': pygame.transform.scale(powerUpShieldImage, (powerUpSize, powerUpSize)),
+                              'surface': pygame.transform.scale(shieldPowerupImage, (powerUpSize, powerUpSize)),
                               'type': 'shield',
                               }
             else:
-                powerUpWidth = powerUpPlusImage.get_width()
-                powerUpHeight = powerUpPlusImage.get_height()
+                powerUpWidth = gemPowerupImage.get_width()
+                powerUpHeight = gemPowerupImage.get_height()
                 newPowerUp = {'rect': pygame.Rect(random.randint(0, WINDOW_WIDTH-powerUpWidth), 0 - powerUpHeight, powerUpHeight, powerUpWidth),
                               'speed': random.randint(POWERUP_SPEED_MIN, POWERUP_SPEED_MAX),
-                              'surface': pygame.transform.scale(powerUpPlusImage, (powerUpWidth, powerUpHeight)),
+                              'surface': pygame.transform.scale(gemPowerupImage, (powerUpWidth, powerUpHeight)),
                               'type': 'plus',
                               }
-            powerUps.append(newPowerUp)
+            powerupList.append(newPowerUp)
 
-        # Move the player around.
-        if moveLeft and playerRect.left > 0:
-            playerRect.move_ip(-1 * PLAYER_SPEED, 0)
-        if moveRight and playerRect.right < WINDOW_WIDTH:
-            playerRect.move_ip(PLAYER_SPEED, 0)
-        if moveUp and playerRect.top > 0:
-            playerRect.move_ip(0, -1 * PLAYER_SPEED)
-        if moveDown and playerRect.bottom < WINDOW_HEIGHT:
-            playerRect.move_ip(0, PLAYER_SPEED)
+        # Move the player around
+        if moveLeft and playerHitbox.left > 0:
+            playerHitbox.move_ip(-1 * PLAYER_SPEED, 0)
+        if moveRight and playerHitbox.right < WINDOW_WIDTH:
+            playerHitbox.move_ip(PLAYER_SPEED, 0)
+        if moveUp and playerHitbox.top > 0:
+            playerHitbox.move_ip(0, -1 * PLAYER_SPEED)
+        if moveDown and playerHitbox.bottom < WINDOW_HEIGHT:
+            playerHitbox.move_ip(0, PLAYER_SPEED)
 
-        # Move the mouse cursor to match the player.
-        pygame.mouse.set_pos(playerRect.centerx, playerRect.centery)
+        # Move the mouse cursor to match the player
+        pygame.mouse.set_pos(playerHitbox.centerx, playerHitbox.centery)
 
         # Add new shots as needed
         shotAddCounter += 1
         if shotAddCounter == SHOT_ADD_RATE:
             shotAddCounter = 0
-            newShot = {'rect': pygame.Rect(playerRect.centerx-3, playerRect.centery-12, 5, 1),}
-            shots.append(newShot)
+            newShot = {'rect': pygame.Rect(playerHitbox.centerx-3, playerHitbox.centery-12, 5, 1),}
+            shotList.append(newShot)
 
-        # Move the baddies down.
-        for b in baddies:
+        # Move astroids down the screen
+        for a in astroidList:
             if not reverseCheat and not slowCheat:
-                b['rect'].move_ip(0, b['speed'])
+                a['rect'].move_ip(0, a['speed'])
             elif reverseCheat:
-                b['rect'].move_ip(0, -5)
+                a['rect'].move_ip(0, -5)
             elif slowCheat:
-                b['rect'].move_ip(0, 1)
+                a['rect'].move_ip(0, 1)
 
-        # Delete baddies that have fallen past the bottom.
-        for b in baddies[:]:
-            if b['rect'].top > WINDOW_HEIGHT:
-                baddies.remove(b)
+        # Delete astroids that have passed the bottom of the screen
+        for a in astroidList[:]:
+            if a['rect'].top > WINDOW_HEIGHT:
+                astroidList.remove(a)
 
-        # Move the explosions down and update animation.
-        for e in explosions:
+        # Move the explosions down and update their animation
+        for e in explosionList:
             e['rect'].move_ip(0, e['speed'])
             e['stage'] += 1
             explosionSize = e['size']
             if e['stage'] == 1:
-                e['surface'] = pygame.transform.scale(baddieImage3, (int(explosionSize*0.75), int(explosionSize*0.75)))
+                e['surface'] = pygame.transform.scale(astroidImageExplosion, (int(explosionSize*0.75), int(explosionSize*0.75)))
                 e['size'] = int(explosionSize*0.8)
                 e['rect'].move_ip(int((explosionSize - e['size'])/2), int((explosionSize - e['size'])/2))
             elif e['stage'] < 6:
-                e['surface'] = pygame.transform.scale(baddieImage3, (int(explosionSize*1.2), int(explosionSize*1.2)))
+                e['surface'] = pygame.transform.scale(astroidImageExplosion, (int(explosionSize*1.2), int(explosionSize*1.2)))
                 e['size'] = int(explosionSize*1.25)
                 e['rect'].move_ip(int((explosionSize - e['size'])/2), int((explosionSize - e['size'])/2))
             elif e['stage'] == 6:
-                explosions.remove(e)
+                explosionList.remove(e)
 
-         # Delete explosions that have fallen past the bottom or burned out.
-        for e in explosions[:]:
+        # Delete explosions that have fallen past the bottom or burned out
+        for e in explosionList[:]:
             if e['rect'].top > WINDOW_HEIGHT:
-                explosions.remove(e)
+                explosionList.remove(e)
 
-        # Move the shots up.
-        for s in shots:
+        # Move player shots up.
+        for s in shotList:
             s['rect'].move_ip(0, -SHOT_SPEED)
 
-         # Delete shots that have moved past the top.
-        for s in shots[:]:
+        # Delete player shots that have moved past the top
+        for s in shotList[:]:
             if s['rect'].top < 0:
-                shots.remove(s)
+                shotList.remove(s)
 
-        # Move the powerups down.
-        for p in powerUps:
+        # Move the powerups down
+        for p in powerupList:
             p['rect'].move_ip(0, p['speed'])
 
-        # Check if any powerups have hit the player.
-        for p in powerUps[:]:
-            if p['rect'].colliderect(playerRect):
-                powerUps.remove(p)
+        # Check if any powerups have hit the player
+        for p in powerupList[:]:
+            if p['rect'].colliderect(playerHitbox):
+                powerupList.remove(p)
                 if (p['type'] == 'shield'):
                     shields += 25
                     if shields > 100:
@@ -277,26 +283,26 @@ while True:
                 elif (p['type'] == 'plus'):
                     score += 30
 
-        # Check if any shots have hit baddies.
-        for b in baddies[:]:
-            for s in shots[:]:
-                if s['rect'].colliderect(b['rect']):
-                    shots.remove(s)
-                    b['health'] -= DAMAGE_PER_SHOT
-                    if b['health'] <= 0:
-                        baddies.remove(b)
-                        explosionSize = b['size']
-                        newExplosion = {'rect': b['rect'],
-                        'speed': b['speed'],
+        # Check if any shots have hit an astroid
+        for a in astroidList[:]:
+            for s in shotList[:]:
+                if s['rect'].colliderect(a['rect']):
+                    shotList.remove(s)
+                    a['health'] -= DAMAGE_PER_SHOT
+                    if a['health'] <= 0:
+                        astroidList.remove(a)
+                        explosionSize = a['size']
+                        newExplosion = {'rect': a['rect'],
+                        'speed': a['speed'],
                         'size': explosionSize,
-                        'surface': pygame.transform.scale(baddieImage3, (explosionSize, explosionSize)),
+                        'surface': pygame.transform.scale(astroidImageExplosion, (explosionSize, explosionSize)),
                         'stage': 2,
                         }
-                        explosions.append(newExplosion)
+                        explosionList.append(newExplosion)
                     break
 
-        # Check if any of the baddies have hit the player.
-        damageTaken = playerHasHitBaddie(playerRect, baddies)
+        # Check if the player has hit an astroid
+        damageTaken = playerHasHitAstroid(playerHitbox, astroidList)
         if damageTaken > 0:
             playerImage = playerImageHit
             hitBlink = 8
@@ -304,7 +310,7 @@ while True:
             if shields < 0:
                 shields = 0
                 playerDestroyed = True
-                playerImage = playerImageExploded
+                playerImage = playerImageExplosion
                 hitBlink = 8
                 pygame.display.update()
                 if score > topScore:
@@ -314,23 +320,23 @@ while True:
         windowSurface.fill(BACKGROUND_COLOR)
 
         # Draw each shot
-        for s in shots:
-            windowSurface.blit(shotImage, s['rect'])
+        for s in shotList:
+            windowSurface.blit(playerShotImage, s['rect'])
 
         # Draw each baddie
-        for b in baddies:
-            windowSurface.blit(b['surface'], b['rect'])
+        for a in astroidList:
+            windowSurface.blit(a['surface'], a['rect'])
 
         # Draw each explosion
-        for e in explosions:
+        for e in explosionList:
             windowSurface.blit(e['surface'], e['rect'])
 
         # Draw each powerup
-        for p in powerUps:
+        for p in powerupList:
             windowSurface.blit(p['surface'], p['rect'])
 
         # Draw the player's rectangle
-        windowSurface.blit(playerImage, playerRect)
+        windowSurface.blit(playerImage, playerHitbox)
 
         # Animate spaceship shields responding to damage.
         # Or animate spaceship exploding upon destruction.
@@ -348,7 +354,6 @@ while True:
         drawText('Shields: %s' % (shields), font, windowSurface, 10, 50)
 
         pygame.display.update()
-
         mainClock.tick(FRAMES_PER_SEC)
 
     # Stop the game and show the "Game Over" screen.
