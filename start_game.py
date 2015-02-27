@@ -105,7 +105,7 @@ while True:
     reverseCheat = slowCheat = False
 
     scoreAddCounter = 0
-    baddieAddCounter = 0
+    astroidAddCounter = 0
     shotAddCounter = 0
     powerUpAddCounter = 0
 
@@ -167,16 +167,16 @@ while True:
 
         # Add new astroids at the top of the screen as needed
         if not reverseCheat and not slowCheat:
-            baddieAddCounter += 1
-        if baddieAddCounter == ASTROID_ADD_RATE:
-            baddieAddCounter = 0
-            baddieSize = random.randint(ASTROID_SIZE_MIN, ASTROID_SIZE_MAX)
-            newBaddie = {'rect': pygame.Rect(random.randint(0, WINDOW_WIDTH-baddieSize), 0 - baddieSize, baddieSize, baddieSize),
+            astroidAddCounter += 1
+        if astroidAddCounter == ASTROID_ADD_RATE:
+            astroidAddCounter = 0
+            astroidSize = random.randint(ASTROID_SIZE_MIN, ASTROID_SIZE_MAX)
+            newBaddie = {'rect': pygame.Rect(random.randint(0, WINDOW_WIDTH-astroidSize), 0 - astroidSize, astroidSize, astroidSize),
                         'speed': random.randint(ASTROID_SPEED_MIN, ASTROID_SPEED_MAX),
-                        'size': baddieSize,
-                        'surface': pygame.transform.scale(astroidImage, (baddieSize, baddieSize)),
-                        'mass': int(baddieSize^3),
-                        'health': int(baddieSize^3),
+                        'size': astroidSize,
+                        'surface': pygame.transform.scale(astroidImage, (astroidSize, astroidSize)),
+                        'mass': int(astroidSize^3),
+                        'health': int(astroidSize^3),
                         }
 
             astroidList.append(newBaddie)
@@ -323,7 +323,7 @@ while True:
         for s in shotList:
             windowSurface.blit(playerShotImage, s['rect'])
 
-        # Draw each baddie
+        # Draw each astroid
         for a in astroidList:
             windowSurface.blit(a['surface'], a['rect'])
 
