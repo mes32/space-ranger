@@ -110,7 +110,6 @@ while True:
     playerImage = playerImageStandard
     playerHitbox.topleft = (WINDOW_WIDTH / 2, WINDOW_HEIGHT - 50)
     moveLeft = moveRight = moveUp = moveDown = False
-    reverseCheat = slowCheat = False
 
     scoreAddCounter = 0
     astroidAddCounter = 0
@@ -122,11 +121,6 @@ while True:
     #pygame.mixer.music.play(-1, 0.0)
 
     while True: # the game loop runs while the game part is playing
-        if playerDestroyed == False:
-            scoreAddCounter += 1
-            if scoreAddCounter == 50:
-                scoreAddCounter = 0
-                #score += 1 # increase score
 
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -164,8 +158,7 @@ while True:
                 playerHitbox.move_ip(event.pos[0] - playerHitbox.centerx, event.pos[1] - playerHitbox.centery)
 
         # Add new astroids at the top of the screen as needed
-        if not reverseCheat and not slowCheat:
-            astroidAddCounter += 1
+        astroidAddCounter += 1
         if astroidAddCounter == ASTROID_ADD_RATE:
             astroidAddCounter = 0
             astroidSize = random.randint(ASTROID_SIZE_MIN, ASTROID_SIZE_MAX)
@@ -223,8 +216,7 @@ while True:
 
         # Move astroids down the screen
         for a in astroidList:
-            if not reverseCheat and not slowCheat:
-                a['rect'].move_ip(0, a['speed'])
+            a['rect'].move_ip(0, a['speed'])
 
         # Delete astroids that have passed the bottom of the screen
         for a in astroidList[:]:
@@ -247,7 +239,7 @@ while True:
             elif e['stage'] == 6:
                 explosionList.remove(e)
 
-        # Delete explosions that have fallen past the bottom or burned out
+        # Delete explosions that have fallen past the bottom
         for e in explosionList[:]:
             if e['rect'].top > WINDOW_HEIGHT:
                 explosionList.remove(e)
@@ -355,16 +347,11 @@ while True:
     #pygame.mixer.music.stop()
     #gameOverSound.play()
 
+    # Show "Game Over" screen
     drawTextCenter('GAME OVER', font, windowSurface, (WINDOW_HEIGHT / 3))
     drawTextCenter('Score: %s Top Score: %s' % (score, topScore), font, windowSurface, (WINDOW_HEIGHT / 3) + 50)
     drawTextCenter('Press any key to play again', font, windowSurface, (WINDOW_HEIGHT / 3) + 100)
     pygame.display.update()
     waitForPlayerToPressKey()
-
-
-#drawText('Press a key to start.', font, windowSurface, (WINDOW_WIDTH / 3) - 30, (WINDOW_HEIGHT / 3) + 50)
-#pygame.display.update()
-#waitForPlayerToPressKey()
-
 
     #gameOverSound.stop()
