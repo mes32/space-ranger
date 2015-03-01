@@ -17,7 +17,7 @@ PLAYER_SPEED = 5
 
 SHOT_ADD_RATE = 6
 SHOT_SPEED = 10
-DAMAGE_PER_SHOT = 5  # originally 3 DAMAGE per shot
+DAMAGE_PER_SHOT = 4  # originally 3 DAMAGE per shot
 
 POWERUP_SPEED_MIN = 1
 POWERUP_SPEED_MAX = 4
@@ -118,17 +118,17 @@ while True:
             scoreAddCounter += 1
             if scoreAddCounter == 50:
                 scoreAddCounter = 0
-                score += 1 # increase score
+                #score += 1 # increase score
 
         for event in pygame.event.get():
             if event.type == QUIT:
                 terminate()
 
             if event.type == KEYDOWN:
-                if event.key == ord('z'):
-                    reverseCheat = True
-                if event.key == ord('x'):
-                    slowCheat = True
+                #if event.key == ord('z'):
+                #    reverseCheat = True
+                #if event.key == ord('x'):
+                #    slowCheat = True
                 if event.key == K_LEFT or event.key == ord('a'):
                     moveRight = False
                     moveLeft = True
@@ -143,12 +143,12 @@ while True:
                     moveDown = True
 
             if event.type == KEYUP:
-                if event.key == ord('z'):
-                    reverseCheat = False
-                    score = 0
-                if event.key == ord('x'):
-                    slowCheat = False
-                    score = 0
+                #if event.key == ord('z'):
+                #    reverseCheat = False
+                #    score = 0
+                #if event.key == ord('x'):
+                #    slowCheat = False
+                #    score = 0
                 if event.key == K_ESCAPE:
                         terminate()
 
@@ -171,7 +171,7 @@ while True:
         if astroidAddCounter == ASTROID_ADD_RATE:
             astroidAddCounter = 0
             astroidSize = random.randint(ASTROID_SIZE_MIN, ASTROID_SIZE_MAX)
-            newBaddie = {'rect': pygame.Rect(random.randint(0, WINDOW_WIDTH-astroidSize), 0 - astroidSize, astroidSize, astroidSize),
+            newAstroid = {'rect': pygame.Rect(random.randint(0, WINDOW_WIDTH-astroidSize), 0 - astroidSize, astroidSize, astroidSize*.6),
                         'speed': random.randint(ASTROID_SPEED_MIN, ASTROID_SPEED_MAX),
                         'size': astroidSize,
                         'surface': pygame.transform.scale(astroidImage, (astroidSize, astroidSize)),
@@ -179,7 +179,7 @@ while True:
                         'health': int(astroidSize^3),
                         }
 
-            astroidList.append(newBaddie)
+            astroidList.append(newAstroid)
 
         # Add new powerUp at the top of the screen, if needed
         powerUpAddCounter += 1
@@ -220,17 +220,17 @@ while True:
         shotAddCounter += 1
         if shotAddCounter == SHOT_ADD_RATE:
             shotAddCounter = 0
-            newShot = {'rect': pygame.Rect(playerHitbox.centerx-3, playerHitbox.centery-12, 5, 1),}
+            newShot = {'rect': pygame.Rect(playerHitbox.centerx-3, playerHitbox.centery-12, 5, 16),}
             shotList.append(newShot)
 
         # Move astroids down the screen
         for a in astroidList:
             if not reverseCheat and not slowCheat:
                 a['rect'].move_ip(0, a['speed'])
-            elif reverseCheat:
-                a['rect'].move_ip(0, -5)
-            elif slowCheat:
-                a['rect'].move_ip(0, 1)
+            #elif reverseCheat:
+            #    a['rect'].move_ip(0, -5)
+            #elif slowCheat:
+            #    a['rect'].move_ip(0, 1)
 
         # Delete astroids that have passed the bottom of the screen
         for a in astroidList[:]:
@@ -286,6 +286,7 @@ while True:
         # Check if any shots have hit an astroid
         for a in astroidList[:]:
             for s in shotList[:]:
+                tempRect = s['rect']
                 if s['rect'].colliderect(a['rect']):
                     shotList.remove(s)
                     a['health'] -= DAMAGE_PER_SHOT
