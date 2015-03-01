@@ -50,6 +50,14 @@ def drawText(text, font, surface, x, y):
     textrect.topleft = (x, y)
     surface.blit(textobj, textrect)
 
+def drawTextCenter(text, font, surface, y):
+    textobj = font.render(text, 1, TEXT_COLOR)
+    textrect = textobj.get_rect()
+    textrect.centery = y
+    textrect.centerx = WINDOW_WIDTH/2
+    surface.blit(textobj, textrect)
+
+
 # Set up pygame, the window, and the mouse cursor
 pygame.init()
 mainClock = pygame.time.Clock()
@@ -83,8 +91,8 @@ gemPowerupImage = pygame.image.load('./resources/images/powerupAstroidCore.png')
 
 # Show the "Start" screen
 shields = 100
-drawText('Space Ranger', font, windowSurface, (WINDOW_WIDTH / 3), (WINDOW_HEIGHT / 3))
-drawText('Press a key to start.', font, windowSurface, (WINDOW_WIDTH / 3) - 30, (WINDOW_HEIGHT / 3) + 50)
+drawTextCenter('Space Ranger', font, windowSurface, (WINDOW_HEIGHT / 3))
+drawTextCenter('Press a key to start.', font, windowSurface, (WINDOW_HEIGHT / 3) + 50)
 pygame.display.update()
 waitForPlayerToPressKey()
 
@@ -336,9 +344,9 @@ while True:
                     playerImage = playerImageStandard
 
         # Draw the score and top score.
-        drawText('Score: %s' % (score), font, windowSurface, 10, 0)
-        drawText('Top Score: %s' % (topScore), font, windowSurface, 10, 25)
-        drawText('Shields: %s' % (shields), font, windowSurface, 10, 50)
+        drawText('Score: %s' % (score), font, windowSurface, 10, 5)
+        drawText('Top Score: %s' % (topScore), font, windowSurface, 10, 30)
+        drawText('Shields: %s' % (shields), font, windowSurface, 10, 55)
 
         pygame.display.update()
         mainClock.tick(FRAMES_PER_SEC)
@@ -347,10 +355,16 @@ while True:
     #pygame.mixer.music.stop()
     #gameOverSound.play()
 
-    drawText('GAME OVER', font, windowSurface, (WINDOW_WIDTH / 3), (WINDOW_HEIGHT / 3))
-    drawText('Score: %s Top Score: %s' % (score, topScore), font, windowSurface, (WINDOW_WIDTH / 3), (WINDOW_HEIGHT / 3) + 50)
-    drawText('Press a key to play again...', font, windowSurface, (WINDOW_WIDTH / 3), (WINDOW_HEIGHT / 3) + 100)
+    drawTextCenter('GAME OVER', font, windowSurface, (WINDOW_HEIGHT / 3))
+    drawTextCenter('Score: %s Top Score: %s' % (score, topScore), font, windowSurface, (WINDOW_HEIGHT / 3) + 50)
+    drawTextCenter('Press any key to play again', font, windowSurface, (WINDOW_HEIGHT / 3) + 100)
     pygame.display.update()
     waitForPlayerToPressKey()
+
+
+#drawText('Press a key to start.', font, windowSurface, (WINDOW_WIDTH / 3) - 30, (WINDOW_HEIGHT / 3) + 50)
+#pygame.display.update()
+#waitForPlayerToPressKey()
+
 
     #gameOverSound.stop()
