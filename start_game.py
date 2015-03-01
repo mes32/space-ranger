@@ -125,10 +125,6 @@ while True:
                 terminate()
 
             if event.type == KEYDOWN:
-                #if event.key == ord('z'):
-                #    reverseCheat = True
-                #if event.key == ord('x'):
-                #    slowCheat = True
                 if event.key == K_LEFT or event.key == ord('a'):
                     moveRight = False
                     moveLeft = True
@@ -143,12 +139,6 @@ while True:
                     moveDown = True
 
             if event.type == KEYUP:
-                #if event.key == ord('z'):
-                #    reverseCheat = False
-                #    score = 0
-                #if event.key == ord('x'):
-                #    slowCheat = False
-                #    score = 0
                 if event.key == K_ESCAPE:
                         terminate()
 
@@ -227,10 +217,6 @@ while True:
         for a in astroidList:
             if not reverseCheat and not slowCheat:
                 a['rect'].move_ip(0, a['speed'])
-            #elif reverseCheat:
-            #    a['rect'].move_ip(0, -5)
-            #elif slowCheat:
-            #    a['rect'].move_ip(0, 1)
 
         # Delete astroids that have passed the bottom of the screen
         for a in astroidList[:]:
