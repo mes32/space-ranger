@@ -1,5 +1,6 @@
-#import pygame, random, sys
+#import sys
 #from pygame.locals import *
+#sys.path.append('./lib')
 from gamewindow import *
 
 TEXT_COLOR = (155, 155, 255)

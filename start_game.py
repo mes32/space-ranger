@@ -1,5 +1,8 @@
-import pygame, random, sys, gametext
+import pygame, random, sys
 
+sys.path.append('./lib')
+
+import gametext
 from pygame.locals import *
 from gamewindow import *
 
@@ -211,6 +214,7 @@ while True:
         # Move the explosions down and update their animation
         for e in explosionList:
             e['rect'].move_ip(0, e['speed'])
+
             e['stage'] += 1
             explosionSize = e['size']
             if e['stage'] == 1:
