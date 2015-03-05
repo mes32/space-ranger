@@ -18,20 +18,12 @@ class Railgun:
             return []
 
 class RailgunProjectile:
-    counter = 0
+
     def __init__(self, playerHitbox):
         self.rect = pygame.Rect(playerHitbox.centerx-3, playerHitbox.centery-12, 5, 16)
 
     def getRect(self):
         return self.rect
-
-    def add(playerHitbox):
-        counter += 1
-        if counter == SHOT_ADD_RATE:
-            counter = 0
-            return [RailgunProjectile(playerHitbox)]
-        else:
-            return []
 
     def move(self):
         self.rect.move_ip(0, -SHOT_SPEED)

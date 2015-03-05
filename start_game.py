@@ -7,9 +7,8 @@ sys.path.append('./lib')
 
 import gametext
 import playershot
+import astroid
 from gamewindow import *
-from astroid import *
-from playershot import *
 
 BACKGROUND_COLOR = (0, 0, 0)
 FRAMES_PER_SEC = 40
@@ -36,9 +35,9 @@ def waitForPlayerToPressKey():
 
 def playerHasHitAstroid(playerHitbox, astroidList):
     for a in astroidList:
-        if playerHitbox.colliderect(a['rect']):
+        if playerHitbox.colliderect(a.getRect()):
             astroidList.remove(a)
-            return a['mass']
+            return a.getMass()
     return 0
 
 # Set up pygame, the window, and the mouse cursor
@@ -61,10 +60,8 @@ playerImageHit = pygame.image.load('./resources/images/playerSpaceshipHit.png')
 playerImageExplosion = pygame.image.load('./resources/images/playerSpaceshipExplosion.png')
 playerImage = playerImageStandard
 playerHitbox = playerImage.get_rect()
-#playerShotImage = playershot.loadImage()
 
-# Set up astroid images
-astroidImage = pygame.image.load('./resources/images/astroid.png')
+# Set up explosion images
 astroidImageExplosion = pygame.image.load('./resources/images/astroidExplosion.png')
 
 # Set up powerup images
@@ -79,8 +76,8 @@ gametext.drawCenter('Press a key to start.', font, windowSurface, (WINDOW_HEIGHT
 pygame.display.update()
 waitForPlayerToPressKey()
 
-
 topScore = 0
+
 while True:
     # Set up the start of the game
     astroidList = []
@@ -102,6 +99,7 @@ while True:
     shields = 100
     playerDestroyed = False
     railgun = playershot.Railgun()
+    astroidSource = astroid.AstroidField()
     #pygame.mixer.music.play(-1, 0.0)
 
     while True: # the game loop runs while the game part is playing
@@ -142,19 +140,7 @@ while True:
                 playerHitbox.move_ip(event.pos[0] - playerHitbox.centerx, event.pos[1] - playerHitbox.centery)
 
         # Add new astroids at the top of the screen as needed
-        astroidAddCounter += 1
-        if astroidAddCounter == ASTROID_ADD_RATE:
-            astroidAddCounter = 0
-            astroidSize = random.randint(ASTROID_SIZE_MIN, ASTROID_SIZE_MAX)
-            newAstroid = {'rect': pygame.Rect(random.randint(0, WINDOW_WIDTH-astroidSize), 0 - astroidSize, astroidSize, astroidSize*.6),
-                        'speed': random.randint(ASTROID_SPEED_MIN, ASTROID_SPEED_MAX),
-                        'size': astroidSize,
-                        'surface': pygame.transform.scale(astroidImage, (astroidSize, astroidSize)),
-                        'mass': int(astroidSize^3),
-                        'health': int(astroidSize^3),
-                        }
-
-            astroidList.append(newAstroid)
+        astroidList.extend(astroidSource.cycle())
 
         # Add new powerUp at the top of the screen, if needed
         powerUpAddCounter += 1
@@ -196,11 +182,8 @@ while True:
 
         # Move astroids down the screen
         for a in astroidList:
-            a['rect'].move_ip(0, a['speed'])
-
-        # Delete astroids that have passed the bottom of the screen
-        for a in astroidList:
-            if a['rect'].top > WINDOW_HEIGHT:
+            a.move()
+            if a.isOffScreen():
                 astroidList.remove(a)
 
         # Move the explosions down and update their animation
@@ -219,9 +202,7 @@ while True:
                 e['rect'].move_ip(int((explosionSize - e['size'])/2), int((explosionSize - e['size'])/2))
             elif e['stage'] == 6:
                 explosionList.remove(e)
-
-        # Delete explosions that have fallen past the bottom
-        for e in explosionList:
+            # Delete explosions that have fallen past the bottom
             if e['rect'].top > WINDOW_HEIGHT:
                 explosionList.remove(e)
 
@@ -231,12 +212,9 @@ while True:
             if shot.isOffScreen():
                 shotList.remove(shot)
 
-        # Move the powerups down
+        # Move the powerups down and delete ones that have moved past the bottom
         for p in powerupList:
             p['rect'].move_ip(0, p['speed'])
-
-        # Delete powerups that have moved past the top
-        for p in powerupList:
             if p['rect'].top > WINDOW_HEIGHT:
                 powerupList.remove(p)
 
@@ -252,24 +230,24 @@ while True:
                 elif (p['type'] == 'plus'):
                     score += 30
 
-        # Check if any shots have hit an astroid
+        # Check if any shots have hit astroids
         for a in astroidList:
             for s in shotList:
-                tempRect = s.getRect()
-                if tempRect.colliderect(a['rect']):
+                shotRect = s.getRect()
+                astroidRect = a.getRect()
+                if shotRect.colliderect(astroidRect):
                     shotList.remove(s)
-                    a['health'] -= s.getDamage()
-                    if a['health'] < 0:
+                    a.takeDamage(s.getDamage())
+                    if a.isDestroyed():
                         astroidList.remove(a)
-                        explosionSize = a['size']
-                        newExplosion = {'rect': a['rect'],
-                        'speed': a['speed'],
+                        explosionSize = a.getSize()
+                        newExplosion = {'rect': a.getRect(),
+                        'speed': a.getSpeed(),
                         'size': explosionSize,
                         'surface': pygame.transform.scale(astroidImageExplosion, (explosionSize, explosionSize)),
                         'stage': 2,
                         }
                         explosionList.append(newExplosion)
-                    #break
 
         # Check if the player has hit an astroid
         damageTaken = playerHasHitAstroid(playerHitbox, astroidList)
@@ -295,7 +273,7 @@ while True:
 
         # Draw each astroid
         for a in astroidList:
-            windowSurface.blit(a['surface'], a['rect'])
+            a.draw(windowSurface)
 
         # Draw each explosion
         for e in explosionList:
