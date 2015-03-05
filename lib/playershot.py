@@ -6,30 +6,45 @@ SHOT_ADD_RATE = 6
 SHOT_SPEED = 10
 DAMAGE_PER_SHOT = 5  # originally 3 DAMAGE per shot
 
-shotAddCounter = 0
+class Railgun:
+    counter = 0
 
-#def loadImage():
-#    return pygame.image.load('./resources/images/shot.png')
+    def cycle(self, playerHitbox):
+        Railgun.counter += 1
+        if Railgun.counter == SHOT_ADD_RATE:
+            Railgun.counter = 0
+            return [RailgunProjectile(playerHitbox)]
+        else:
+            return []
 
-def addNew(playerHitbox, counter):
-    if counter % SHOT_ADD_RATE == 0:
-        counter = 0
-        newShot = {'rect': pygame.Rect(playerHitbox.centerx-3, playerHitbox.centery-12, 5, 16),}
-        return [newShot]
-    else:
-        return []
+class RailgunProjectile:
+    counter = 0
+    def __init__(self, playerHitbox):
+        self.rect = pygame.Rect(playerHitbox.centerx-3, playerHitbox.centery-12, 5, 16)
 
-def move(shot):
-    shot['rect'].move_ip(0, -SHOT_SPEED)
+    def getRect(self):
+        return self.rect
 
-def isOffScreen(shot):
-    if shot['rect'].bottom < 0:
-        return True
-    else:
-        return False
+    def add(playerHitbox):
+        counter += 1
+        if counter == SHOT_ADD_RATE:
+            counter = 0
+            return [RailgunProjectile(playerHitbox)]
+        else:
+            return []
 
-def draw(shot, windowSurface):
-    windowSurface.blit(SHOT_IMAGE, shot['rect'])
+    def move(self):
+        self.rect.move_ip(0, -SHOT_SPEED)
 
-def getDamage(shot):
-    return DAMAGE_PER_SHOT
+    def isOffScreen(self):
+        if self.rect.bottom < 0:
+            return True
+        else:
+            return False
+
+    def draw(self, windowSurface):
+        windowSurface.blit(SHOT_IMAGE, self.rect)
+
+    def getDamage(self):
+        return DAMAGE_PER_SHOT
+

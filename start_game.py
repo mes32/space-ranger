@@ -9,7 +9,7 @@ import gametext
 import playershot
 from gamewindow import *
 from astroid import *
-#from playershot import *
+from playershot import *
 
 BACKGROUND_COLOR = (0, 0, 0)
 FRAMES_PER_SEC = 40
@@ -101,6 +101,7 @@ while True:
 
     shields = 100
     playerDestroyed = False
+    railgun = playershot.Railgun()
     #pygame.mixer.music.play(-1, 0.0)
 
     while True: # the game loop runs while the game part is playing
@@ -177,6 +178,9 @@ while True:
                               }
             powerupList.append(newPowerUp)
 
+        # Add new shots as needed
+        shotList.extend(railgun.cycle(playerHitbox))
+
         # Move the player around
         if moveLeft and playerHitbox.left > 0:
             playerHitbox.move_ip(-1 * PLAYER_SPEED, 0)
@@ -190,24 +194,12 @@ while True:
         # Move the mouse cursor to match the player
         pygame.mouse.set_pos(playerHitbox.centerx, playerHitbox.centery)
 
-        # Add new shots as needed
-        # **** Read about append behavior. What happens if you append([])?
-        shotAddCounter += 1
-        #if shotAddCounter == SHOT_ADD_RATE:
-        #    shotAddCounter = 0
-        #    newShot = {'rect': pygame.Rect(playerHitbox.centerx-3, playerHitbox.centery-12, 5, 16),}
-        #    shotList.append(newShot)
-
-        shotList.extend(playershot.addNew(playerHitbox, shotAddCounter))
-
-        shotAddCounter %= 7
-
         # Move astroids down the screen
         for a in astroidList:
             a['rect'].move_ip(0, a['speed'])
 
         # Delete astroids that have passed the bottom of the screen
-        for a in astroidList[:]:
+        for a in astroidList:
             if a['rect'].top > WINDOW_HEIGHT:
                 astroidList.remove(a)
 
@@ -229,14 +221,14 @@ while True:
                 explosionList.remove(e)
 
         # Delete explosions that have fallen past the bottom
-        for e in explosionList[:]:
+        for e in explosionList:
             if e['rect'].top > WINDOW_HEIGHT:
                 explosionList.remove(e)
 
         # Move player shots and delete those that have moved past the top of the sceen
-        for shot in shotList[:]:
-            playershot.move(shot)
-            if playershot.isOffScreen(shot):
+        for shot in shotList:
+            shot.move()
+            if shot.isOffScreen():
                 shotList.remove(shot)
 
         # Move the powerups down
@@ -244,12 +236,12 @@ while True:
             p['rect'].move_ip(0, p['speed'])
 
         # Delete powerups that have moved past the top
-        for p in powerupList[:]:
+        for p in powerupList:
             if p['rect'].top > WINDOW_HEIGHT:
                 powerupList.remove(p)
 
         # Check if any powerups have hit the player
-        for p in powerupList[:]:
+        for p in powerupList:
             if p['rect'].colliderect(playerHitbox):
                 powerupList.remove(p)
                 if (p['type'] == 'shield'):
@@ -261,12 +253,12 @@ while True:
                     score += 30
 
         # Check if any shots have hit an astroid
-        for a in astroidList[:]:
-            for s in shotList[:]:
-                tempRect = s['rect']
-                if s['rect'].colliderect(a['rect']):
+        for a in astroidList:
+            for s in shotList:
+                tempRect = s.getRect()
+                if tempRect.colliderect(a['rect']):
                     shotList.remove(s)
-                    a['health'] -= playershot.getDamage(s)
+                    a['health'] -= s.getDamage()
                     if a['health'] < 0:
                         astroidList.remove(a)
                         explosionSize = a['size']
@@ -298,8 +290,8 @@ while True:
         windowSurface.fill(BACKGROUND_COLOR)
 
         # Draw each shot
-        for shot in shotList[:]:
-            playershot.draw(shot, windowSurface)
+        for shot in shotList:
+            shot.draw(windowSurface)
 
         # Draw each astroid
         for a in astroidList:
