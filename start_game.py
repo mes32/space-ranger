@@ -6,9 +6,10 @@ from pygame.locals import *
 sys.path.append('./lib')
 
 import gametext
+import playershot
 from gamewindow import *
 from astroid import *
-from playershot import *
+#from playershot import *
 
 BACKGROUND_COLOR = (0, 0, 0)
 FRAMES_PER_SEC = 40
@@ -60,7 +61,7 @@ playerImageHit = pygame.image.load('./resources/images/playerSpaceshipHit.png')
 playerImageExplosion = pygame.image.load('./resources/images/playerSpaceshipExplosion.png')
 playerImage = playerImageStandard
 playerHitbox = playerImage.get_rect()
-playerShotImage = pygame.image.load('./resources/images/shot.png')
+#playerShotImage = playershot.loadImage()
 
 # Set up astroid images
 astroidImage = pygame.image.load('./resources/images/astroid.png')
@@ -190,11 +191,16 @@ while True:
         pygame.mouse.set_pos(playerHitbox.centerx, playerHitbox.centery)
 
         # Add new shots as needed
+        # **** Read about append behavior. What happens if you append([])?
         shotAddCounter += 1
-        if shotAddCounter == SHOT_ADD_RATE:
-            shotAddCounter = 0
-            newShot = {'rect': pygame.Rect(playerHitbox.centerx-3, playerHitbox.centery-12, 5, 16),}
-            shotList.append(newShot)
+        #if shotAddCounter == SHOT_ADD_RATE:
+        #    shotAddCounter = 0
+        #    newShot = {'rect': pygame.Rect(playerHitbox.centerx-3, playerHitbox.centery-12, 5, 16),}
+        #    shotList.append(newShot)
+
+        shotList.extend(playershot.addNew(playerHitbox, shotAddCounter))
+
+        shotAddCounter %= 7
 
         # Move astroids down the screen
         for a in astroidList:
@@ -227,14 +233,11 @@ while True:
             if e['rect'].top > WINDOW_HEIGHT:
                 explosionList.remove(e)
 
-        # Move player shots up.
-        for s in shotList:
-            s['rect'].move_ip(0, -SHOT_SPEED)
-
-        # Delete player shots that have moved past the top
-        for s in shotList[:]:
-            if s['rect'].bottom < 0:
-                shotList.remove(s)
+        # Move player shots and delete those that have moved past the top of the sceen
+        for shot in shotList[:]:
+            playershot.move(shot)
+            if playershot.isOffScreen(shot):
+                shotList.remove(shot)
 
         # Move the powerups down
         for p in powerupList:
@@ -263,7 +266,7 @@ while True:
                 tempRect = s['rect']
                 if s['rect'].colliderect(a['rect']):
                     shotList.remove(s)
-                    a['health'] -= DAMAGE_PER_SHOT
+                    a['health'] -= playershot.getDamage(s)
                     if a['health'] < 0:
                         astroidList.remove(a)
                         explosionSize = a['size']
@@ -295,8 +298,8 @@ while True:
         windowSurface.fill(BACKGROUND_COLOR)
 
         # Draw each shot
-        for shot in shotList:
-            windowSurface.blit(playerShotImage, shot['rect'])
+        for shot in shotList[:]:
+            playershot.draw(shot, windowSurface)
 
         # Draw each astroid
         for a in astroidList:
