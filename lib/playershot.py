@@ -1,0 +1,3 @@
+SHOT_ADD_RATE = 6
+SHOT_SPEED = 10
+DAMAGE_PER_SHOT = 5  # originally 3 DAMAGE per shot

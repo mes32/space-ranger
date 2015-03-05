@@ -8,15 +8,12 @@ sys.path.append('./lib')
 import gametext
 from gamewindow import *
 from astroid import *
+from playershot import *
 
 BACKGROUND_COLOR = (0, 0, 0)
 FRAMES_PER_SEC = 40
 
 PLAYER_SPEED = 5
-
-SHOT_ADD_RATE = 6
-SHOT_SPEED = 10
-DAMAGE_PER_SHOT = 5  # originally 3 DAMAGE per shot
 
 POWERUP_SPEED_MIN = 1
 POWERUP_SPEED_MAX = 4
@@ -267,7 +264,7 @@ while True:
                 if s['rect'].colliderect(a['rect']):
                     shotList.remove(s)
                     a['health'] -= DAMAGE_PER_SHOT
-                    if a['health'] <= 0:
+                    if a['health'] < 0:
                         astroidList.remove(a)
                         explosionSize = a['size']
                         newExplosion = {'rect': a['rect'],
@@ -277,7 +274,7 @@ while True:
                         'stage': 2,
                         }
                         explosionList.append(newExplosion)
-                    break
+                    #break
 
         # Check if the player has hit an astroid
         damageTaken = playerHasHitAstroid(playerHitbox, astroidList)
@@ -298,8 +295,8 @@ while True:
         windowSurface.fill(BACKGROUND_COLOR)
 
         # Draw each shot
-        for s in shotList:
-            windowSurface.blit(playerShotImage, s['rect'])
+        for shot in shotList:
+            windowSurface.blit(playerShotImage, shot['rect'])
 
         # Draw each astroid
         for a in astroidList:
