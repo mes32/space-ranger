@@ -243,6 +243,11 @@ while True:
         for p in powerupList:
             p['rect'].move_ip(0, p['speed'])
 
+        # Delete powerups that have moved past the top
+        for p in powerupList[:]:
+            if p['rect'].top < 0:
+                powerupList.remove(p)
+
         # Check if any powerups have hit the player
         for p in powerupList[:]:
             if p['rect'].colliderect(playerHitbox):
