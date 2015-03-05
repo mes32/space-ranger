@@ -1,19 +1,16 @@
-import pygame, random, sys
+import sys
+import random
+import pygame
+from pygame.locals import *
 
 sys.path.append('./lib')
 
 import gametext
-from pygame.locals import *
 from gamewindow import *
+from astroid import *
 
 BACKGROUND_COLOR = (0, 0, 0)
 FRAMES_PER_SEC = 40
-
-ASTROID_SIZE_MIN = 15
-ASTROID_SIZE_MAX = 45
-ASTROID_SPEED_MIN = 1
-ASTROID_SPEED_MAX = 7
-ASTROID_ADD_RATE = 6
 
 PLAYER_SPEED = 5
 
