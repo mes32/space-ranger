@@ -236,7 +236,7 @@ while True:
 
         # Delete player shots that have moved past the top
         for s in shotList[:]:
-            if s['rect'].top < 0:
+            if s['rect'].bottom < 0:
                 shotList.remove(s)
 
         # Move the powerups down
@@ -245,7 +245,7 @@ while True:
 
         # Delete powerups that have moved past the top
         for p in powerupList[:]:
-            if p['rect'].top < 0:
+            if p['rect'].top > WINDOW_HEIGHT:
                 powerupList.remove(p)
 
         # Check if any powerups have hit the player
