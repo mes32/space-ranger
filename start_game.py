@@ -8,16 +8,14 @@ sys.path.append('./lib')
 import gametext
 import playershot
 import astroid
+import powerup
 from gamewindow import *
+from powerup import *
 
 BACKGROUND_COLOR = (0, 0, 0)
 FRAMES_PER_SEC = 40
 
 PLAYER_SPEED = 5
-
-POWERUP_SPEED_MIN = 1
-POWERUP_SPEED_MAX = 4
-POWERUP_ADD_RATE = 300
 
 def terminate():
     pygame.quit()
@@ -64,11 +62,6 @@ playerHitbox = playerImage.get_rect()
 # Set up explosion images
 astroidImageExplosion = pygame.image.load('./resources/images/astroidExplosion.png')
 
-# Set up powerup images
-shieldPowerupImage = pygame.image.load('./resources/images/powerupShield.png')
-gemPowerupImage = pygame.image.load('./resources/images/powerupAstroidCore.png')
-
-
 # Show the "Start" screen
 shields = 100
 gametext.drawCenter('Space Ranger', font, windowSurface, (WINDOW_HEIGHT / 3))
@@ -92,17 +85,16 @@ while True:
     moveLeft = moveRight = moveUp = moveDown = False
 
     scoreAddCounter = 0
-    astroidAddCounter = 0
-    shotAddCounter = 0
     powerUpAddCounter = 0
 
     shields = 100
     playerDestroyed = False
     railgun = playershot.Railgun()
     astroidSource = astroid.AstroidField()
+    powerupSource = powerup.PowerupSource()
     #pygame.mixer.music.play(-1, 0.0)
 
-    while True: # the game loop runs while the game part is playing
+    while True: # main game loop runs continuously while the game is playing
 
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -125,7 +117,6 @@ while True:
             if event.type == KEYUP:
                 if event.key == K_ESCAPE:
                         terminate()
-
                 if event.key == K_LEFT or event.key == ord('a'):
                     moveLeft = False
                 if event.key == K_RIGHT or event.key == ord('d'):
@@ -142,27 +133,8 @@ while True:
         # Add new astroids at the top of the screen as needed
         astroidList.extend(astroidSource.cycle())
 
-        # Add new powerUp at the top of the screen, if needed
-        powerUpAddCounter += 1
-        if powerUpAddCounter == POWERUP_ADD_RATE:
-            powerUpAddCounter = 0
-            powerUpType = random.randint(0,4)
-            if powerUpType == 1 or (shields < 30 and (powerUpType == 2 or powerUpType == 3)):
-                powerUpSize = shieldPowerupImage.get_width()
-                newPowerUp = {'rect': pygame.Rect(random.randint(0, WINDOW_WIDTH-powerUpSize), 0 - powerUpSize, powerUpSize, powerUpSize),
-                              'speed': random.randint(POWERUP_SPEED_MIN, POWERUP_SPEED_MAX),
-                              'surface': pygame.transform.scale(shieldPowerupImage, (powerUpSize, powerUpSize)),
-                              'type': 'shield',
-                              }
-            else:
-                powerUpWidth = gemPowerupImage.get_width()
-                powerUpHeight = gemPowerupImage.get_height()
-                newPowerUp = {'rect': pygame.Rect(random.randint(0, WINDOW_WIDTH-powerUpWidth), 0 - powerUpHeight, powerUpHeight, powerUpWidth),
-                              'speed': random.randint(POWERUP_SPEED_MIN, POWERUP_SPEED_MAX),
-                              'surface': pygame.transform.scale(gemPowerupImage, (powerUpWidth, powerUpHeight)),
-                              'type': 'plus',
-                              }
-            powerupList.append(newPowerUp)
+        # Add new powerups at the top of the screen as needed
+        powerupList.extend(powerupSource.cycle(shields))
 
         # Add new shots as needed
         shotList.extend(railgun.cycle(playerHitbox))
@@ -206,7 +178,7 @@ while True:
             if e['rect'].top > WINDOW_HEIGHT:
                 explosionList.remove(e)
 
-        # Move player shots and delete those that have moved past the top of the sceen
+        # Move player shots up and delete those that have moved past the top
         for shot in shotList:
             shot.move()
             if shot.isOffScreen():
@@ -214,20 +186,20 @@ while True:
 
         # Move the powerups down and delete ones that have moved past the bottom
         for p in powerupList:
-            p['rect'].move_ip(0, p['speed'])
-            if p['rect'].top > WINDOW_HEIGHT:
+            p.move()
+            if p.isOffScreen():
                 powerupList.remove(p)
 
         # Check if any powerups have hit the player
         for p in powerupList:
-            if p['rect'].colliderect(playerHitbox):
+            if p.getRect().colliderect(playerHitbox):
                 powerupList.remove(p)
-                if (p['type'] == 'shield'):
+                if (p.getType() == 'shield'):
                     shields += 25
                     if shields > 100:
                         shields = 100
                         score += 10
-                elif (p['type'] == 'plus'):
+                elif (p.getType() == 'plus'):
                     score += 30
 
         # Check if any shots have hit astroids
@@ -281,7 +253,7 @@ while True:
 
         # Draw each powerup
         for p in powerupList:
-            windowSurface.blit(p['surface'], p['rect'])
+            p.draw(windowSurface)
 
         # Draw the player's rectangle
         windowSurface.blit(playerImage, playerHitbox)
