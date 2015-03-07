@@ -9,6 +9,7 @@ import gametext
 import playershot
 import astroid
 import powerup
+import explosion
 from gamewindow import *
 from powerup import *
 
@@ -58,9 +59,6 @@ playerImageHit = pygame.image.load('./resources/images/playerSpaceshipHit.png')
 playerImageExplosion = pygame.image.load('./resources/images/playerSpaceshipExplosion.png')
 playerImage = playerImageStandard
 playerHitbox = playerImage.get_rect()
-
-# Set up explosion images
-astroidImageExplosion = pygame.image.load('./resources/images/astroidExplosion.png')
 
 # Show the "Start" screen
 shields = 100
@@ -160,22 +158,8 @@ while True:
 
         # Move the explosions down and update their animation
         for e in explosionList:
-            e['rect'].move_ip(0, e['speed'])
-
-            e['stage'] += 1
-            explosionSize = e['size']
-            if e['stage'] == 1:
-                e['surface'] = pygame.transform.scale(astroidImageExplosion, (int(explosionSize*0.75), int(explosionSize*0.75)))
-                e['size'] = int(explosionSize*0.8)
-                e['rect'].move_ip(int((explosionSize - e['size'])/2), int((explosionSize - e['size'])/2))
-            elif e['stage'] < 6:
-                e['surface'] = pygame.transform.scale(astroidImageExplosion, (int(explosionSize*1.2), int(explosionSize*1.2)))
-                e['size'] = int(explosionSize*1.25)
-                e['rect'].move_ip(int((explosionSize - e['size'])/2), int((explosionSize - e['size'])/2))
-            elif e['stage'] == 6:
-                explosionList.remove(e)
-            # Delete explosions that have fallen past the bottom
-            if e['rect'].top > WINDOW_HEIGHT:
+            e.move()
+            if e.isOffScreen():
                 explosionList.remove(e)
 
         # Move player shots up and delete those that have moved past the top
@@ -205,21 +189,12 @@ while True:
         # Check if any shots have hit astroids
         for a in astroidList:
             for s in shotList:
-                shotRect = s.getRect()
-                astroidRect = a.getRect()
-                if shotRect.colliderect(astroidRect):
+                if s.getRect().colliderect(a.getRect()):
                     shotList.remove(s)
                     a.takeDamage(s.getDamage())
                     if a.isDestroyed():
                         astroidList.remove(a)
-                        explosionSize = a.getSize()
-                        newExplosion = {'rect': a.getRect(),
-                        'speed': a.getSpeed(),
-                        'size': explosionSize,
-                        'surface': pygame.transform.scale(astroidImageExplosion, (explosionSize, explosionSize)),
-                        'stage': 2,
-                        }
-                        explosionList.append(newExplosion)
+                        explosionList.append(explosion.Explosion(a))
 
         # Check if the player has hit an astroid
         damageTaken = playerHasHitAstroid(playerHitbox, astroidList)
@@ -249,7 +224,7 @@ while True:
 
         # Draw each explosion
         for e in explosionList:
-            windowSurface.blit(e['surface'], e['rect'])
+            e.draw(windowSurface)
 
         # Draw each powerup
         for p in powerupList:
