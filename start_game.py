@@ -34,23 +34,25 @@ def playerHasHitAstroid(playerHitbox, astroidList):
             return a.getMass()
     return 0
 
+def showStartScreen():
+    # Show the "Start" screen
+    gametext.drawCenter('Space Ranger', font, windowSurface, (WINDOW_HEIGHT / 3))
+    gametext.drawCenter('Press a key to start.', font, windowSurface, (WINDOW_HEIGHT / 3) + 50)
+    pygame.display.update()
+    waitForPlayerToPressKey()
+
 # Set up pygame, main clock, game window, and font
 pygame.init()
 mainClock = pygame.time.Clock()
 windowSurface = initWindowSurface()
 font = gametext.initFont()
+topScore = 0
 
 # Set up sounds
 #gameOverSound = pygame.mixer.Sound('gameover.wav')
 #pygame.mixer.music.load('background.mid')
 
-# Show the "Start" screen
-gametext.drawCenter('Space Ranger', font, windowSurface, (WINDOW_HEIGHT / 3))
-gametext.drawCenter('Press a key to start.', font, windowSurface, (WINDOW_HEIGHT / 3) + 50)
-pygame.display.update()
-waitForPlayerToPressKey()
-
-topScore = 0
+showStartScreen()
 
 while True:
     # Set up the start of the game
@@ -58,8 +60,6 @@ while True:
     shotList = []
     powerupList = []
     explosionList = []
-
-    #score = 0
 
     moveLeft = moveRight = moveUp = moveDown = False
     player = playership.PlayerShip()
