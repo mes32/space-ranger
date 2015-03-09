@@ -3,6 +3,7 @@
 """
 
 import pygame
+from pygame.locals import *
 from gamewindow import *
 
 PLAYER_SPEED = 5   # Rate at which player avatar moves on screen (pixels/per-game-cycle)
@@ -24,6 +25,7 @@ class PlayerShip:
         self.shields = 100
         self.shieldBlink = 0
         self.score = 0
+        self.movingLeft = self.movingRight = self.movingUp = self.movingDown = False
 
     def reset(self):
         """Resets the location and image"""
@@ -31,22 +33,41 @@ class PlayerShip:
         self.hitbox = self.image.get_rect()
         self.hitbox.topleft = (WINDOW_WIDTH / 2, WINDOW_HEIGHT - 50)
         self.shieldBlink = 0
+        self.movingLeft = self.movingRight = self.movingUp = self.movingDown = False
 
-    def moveLeft(self):
-        """Move the avatar leftward on the screen at rate PLAYER_SPEED"""
-        self.hitbox.move_ip(-1 * PLAYER_SPEED, 0)
+    def move(self):
+        if self.movingLeft and self.notLeftEdge():
+            self.hitbox.move_ip(-1 * PLAYER_SPEED, 0)
+        if self.movingRight and self.notRightEdge():
+            self.hitbox.move_ip(PLAYER_SPEED, 0)
+        if self.movingUp and self.notTopEdge():
+            self.hitbox.move_ip(0, -1 * PLAYER_SPEED)
+        if self.movingDown and self.notBottomEdge():
+            self.hitbox.move_ip(0, PLAYER_SPEED)
 
-    def moveRight(self):
-        """Move the avatar rightward on the screen at rate PLAYER_SPEED"""
-        self.hitbox.move_ip(PLAYER_SPEED, 0)
+    def keydownMove(self, event_key):
+        if event_key == K_LEFT or event_key == ord('a'):
+            self.movingRight = False
+            self.movingLeft = True
+        if event_key == K_RIGHT or event_key == ord('d'):
+            self.movingLeft = False
+            self.movingRight = True
+        if event_key == K_UP or event_key == ord('w'):
+            self.movingDown = False
+            self.movingUp = True
+        if event_key == K_DOWN or event_key == ord('s'):
+            self.movingUp = False
+            self.movingDown = True
 
-    def moveUp(self):
-        """Move the avatar upward on the screen at rate PLAYER_SPEED"""
-        self.hitbox.move_ip(0, -1 * PLAYER_SPEED)
-
-    def moveDown(self):
-        """Move the avatar downward on the screen at rate PLAYER_SPEED"""
-        self.hitbox.move_ip(0, PLAYER_SPEED)
+    def keyupMove(self, event_key):
+        if event_key == K_LEFT or event_key == ord('a'):
+            self.movingLeft = False
+        if event_key == K_RIGHT or event_key == ord('d'):
+            self.movingRight = False
+        if event_key == K_UP or event_key == ord('w'):
+            self.movingUp = False
+        if event_key == K_DOWN or event_key == ord('s'):
+            self.movingDown = False
 
     def mouseMove(self, event):
         """Move the avatar on the screen based on mouse movement events"""

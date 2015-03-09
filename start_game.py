@@ -122,55 +122,26 @@ while True:
     while True:
     # main game loop runs continuously while the game is playing
 
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                terminateGame()
-
-            if event.type == KEYDOWN:
-                if event.key == K_LEFT or event.key == ord('a'):
-                    moveRight = False
-                    moveLeft = True
-                if event.key == K_RIGHT or event.key == ord('d'):
-                    moveLeft = False
-                    moveRight = True
-                if event.key == K_UP or event.key == ord('w'):
-                    moveDown = False
-                    moveUp = True
-                if event.key == K_DOWN or event.key == ord('s'):
-                    moveUp = False
-                    moveDown = True
-
-            if event.type == KEYUP:
-                if event.key == K_ESCAPE:
-                    terminateGame()
-                if event.key == K_LEFT or event.key == ord('a'):
-                    moveLeft = False
-                if event.key == K_RIGHT or event.key == ord('d'):
-                    moveRight = False
-                if event.key == K_UP or event.key == ord('w'):
-                    moveUp = False
-                if event.key == K_DOWN or event.key == ord('s'):
-                    moveDown = False
-
-            if event.type == MOUSEMOTION:
-                player.mouseMove(event)
-
         # Add new astroids, player shots, and powerups as needed
         astroidList.extend(astroidSource.cycle())
         shotList.extend(railgun.cycle(player.getHitbox()))
         powerupList.extend(powerupSource.cycle(player.getShields()))
 
-        # Move the player's ship around
-        if moveLeft and player.notLeftEdge():
-            player.moveLeft()
-        if moveRight and player.notRightEdge():
-            player.moveRight()
-        if moveUp and player.notTopEdge():
-            player.moveUp()
-        if moveDown and player.notBottomEdge():
-            player.moveDown()
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                terminateGame()
+            if event.type == KEYDOWN:
+                player.keydownMove(event.key)
+            if event.type == KEYUP:
+                if event.key == K_ESCAPE:
+                    terminateGame()
+                else:
+                    player.keyupMove(event.key)
+            if event.type == MOUSEMOTION:
+                player.mouseMove(event)
 
-        # Move the mouse cursor to match the player
+        # Move the player's ship around
+        player.move()
         player.mouseCursorFollow()
 
         # Move astroids down the screen
