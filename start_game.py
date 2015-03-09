@@ -36,22 +36,42 @@ def playerHasHitAstroid(playerHitbox, astroidList):
 
 def showStartScreen():
     # Show the "Start" screen
-    gametext.drawCenter('Space Ranger', font, windowSurface, (WINDOW_HEIGHT / 3))
-    gametext.drawCenter('Press a key to start.', font, windowSurface, (WINDOW_HEIGHT / 3) + 50)
+    gametext.drawCenter('Space Ranger', windowSurface, (WINDOW_HEIGHT / 3))
+    gametext.drawCenter('Press a key to start.', windowSurface, (WINDOW_HEIGHT / 3) + 50)
     pygame.display.update()
     waitForPlayerToPressKey()
 
-# Set up pygame, main clock, game window, and font
-pygame.init()
-mainClock = pygame.time.Clock()
-windowSurface = initWindowSurface()
-font = gametext.initFont()
-topScore = 0
+def showGameOverScreen():
+    # Stop the game and show the "Game Over" screen.
+    #pygame.mixer.music.stop()
+    #gameOverSound.play()
 
-# Set up sounds
-#gameOverSound = pygame.mixer.Sound('gameover.wav')
-#pygame.mixer.music.load('background.mid')
+    # Show "Game Over" screen
+    gametext.drawCenter('GAME OVER', windowSurface, (WINDOW_HEIGHT / 3))
+    gametext.drawCenter('Score: %s Top Score: %s' % (player.getScore(), topScore), windowSurface, (WINDOW_HEIGHT / 3) + 50)
+    gametext.drawCenter('Press any key to play again', windowSurface, (WINDOW_HEIGHT / 3) + 100)
+    pygame.display.update()
+    waitForPlayerToPressKey()
 
+    #gameOverSound.stop()
+
+
+def initGame():
+    """Initialize pygame, main clock, game window, and font"""
+    pygame.init()
+    gametext.initFont()
+    global mainClock
+    mainClock = pygame.time.Clock()
+    global windowSurface
+    windowSurface = initWindowSurface()
+    global topScore
+    topScore = 0
+
+    # Set up sounds
+    #gameOverSound = pygame.mixer.Sound('gameover.wav')
+    #pygame.mixer.music.load('background.mid')
+
+initGame()
 showStartScreen()
 
 while True:
@@ -197,9 +217,9 @@ while True:
         player.draw(windowSurface)
 
         # Draw the score and top score.
-        gametext.draw('Score: %s' % (player.getScore()), font, windowSurface, 10, 5)
-        gametext.draw('Top Score: %s' % (topScore), font, windowSurface, 10, 30)
-        gametext.draw('Shields: %s' % (player.getShields()), font, windowSurface, 10, 55)
+        gametext.draw('Score: %s' % (player.getScore()), windowSurface, 10, 5)
+        gametext.draw('Top Score: %s' % (topScore), windowSurface, 10, 30)
+        gametext.draw('Shields: %s' % (player.getShields()), windowSurface, 10, 55)
 
         pygame.display.update()
         mainClock.tick(FRAMES_PER_SEC)
@@ -210,14 +230,5 @@ while True:
             break
 
     # Stop the game and show the "Game Over" screen.
-    #pygame.mixer.music.stop()
-    #gameOverSound.play()
+    showGameOverScreen()
 
-    # Show "Game Over" screen
-    gametext.drawCenter('GAME OVER', font, windowSurface, (WINDOW_HEIGHT / 3))
-    gametext.drawCenter('Score: %s Top Score: %s' % (player.getScore(), topScore), font, windowSurface, (WINDOW_HEIGHT / 3) + 50)
-    gametext.drawCenter('Press any key to play again', font, windowSurface, (WINDOW_HEIGHT / 3) + 100)
-    pygame.display.update()
-    waitForPlayerToPressKey()
-
-    #gameOverSound.stop()
