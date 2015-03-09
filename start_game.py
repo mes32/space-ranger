@@ -85,6 +85,36 @@ def drawFrame(windowSurface, player, topScore, astroidList, shotList, explosionL
 
     pygame.display.update()
 
+def moveAll(player, astroidList, shotList, explosionList, powerupList):
+
+    # Move the player's ship around
+    player.move()
+    player.mouseCursorFollow()
+
+    # Move astroids down the screen
+    for a in astroidList:
+        a.move()
+        if a.isOffScreen():
+            astroidList.remove(a)
+
+    # Move the explosions down and update their animation
+    for e in explosionList:
+        e.move()
+        if e.isOffScreen():
+            explosionList.remove(e)
+
+    # Move player shots up and delete those that have moved past the top
+    for s in shotList:
+        s.move()
+        if s.isOffScreen():
+            shotList.remove(s)
+
+    # Move the powerups down and delete ones that have moved past the bottom
+    for p in powerupList:
+        p.move()
+        if p.isOffScreen():
+            powerupList.remove(p)
+
 def initGame():
     """Initialize pygame, main clock, game window, and font"""
     pygame.init()
@@ -109,8 +139,6 @@ while True:
     shotList = []
     powerupList = []
     explosionList = []
-
-    moveLeft = moveRight = moveUp = moveDown = False
 
     player = playership.PlayerShip()
     railgun = playershot.Railgun()
@@ -140,33 +168,8 @@ while True:
             if event.type == MOUSEMOTION:
                 player.mouseMove(event)
 
-        # Move the player's ship around
-        player.move()
-        player.mouseCursorFollow()
-
-        # Move astroids down the screen
-        for a in astroidList:
-            a.move()
-            if a.isOffScreen():
-                astroidList.remove(a)
-
-        # Move the explosions down and update their animation
-        for e in explosionList:
-            e.move()
-            if e.isOffScreen():
-                explosionList.remove(e)
-
-        # Move player shots up and delete those that have moved past the top
-        for s in shotList:
-            s.move()
-            if s.isOffScreen():
-                shotList.remove(s)
-
-        # Move the powerups down and delete ones that have moved past the bottom
-        for p in powerupList:
-            p.move()
-            if p.isOffScreen():
-                powerupList.remove(p)
+        # Move and update all game elements/sprites
+        moveAll(player, astroidList, shotList, explosionList, powerupList)
 
         # Check if any powerups have hit the player
         for p in powerupList:
