@@ -13,7 +13,7 @@ import powerup
 from pygame.locals import *
 from gamewindow import *
 
-def terminate():
+def terminateGame():
     pygame.quit()
     sys.exit()
 
@@ -21,10 +21,10 @@ def waitForPlayerToPressKey():
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
-                terminate()
+                terminateGame()
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE: # pressing escape quits
-                    terminate()
+                    terminateGame()
                 return
 
 def playerHasHitAstroid(playerHitbox, astroidList):
@@ -55,6 +55,35 @@ def showGameOverScreen():
 
     #gameOverSound.stop()
 
+def drawFrame(windowSurface, player, topScore, astroidList, shotList, explosionList, powerupList):
+    # Draw the game world on the window.
+    windowSurface.fill(BACKGROUND_COLOR)
+
+    # Draw each shot
+    for s in shotList:
+        s.draw(windowSurface)
+
+    # Draw each astroid
+    for a in astroidList:
+        a.draw(windowSurface)
+
+    # Draw each explosion
+    for e in explosionList:
+        e.draw(windowSurface)
+
+    # Draw each powerup
+    for p in powerupList:
+        p.draw(windowSurface)
+
+    # Draw the player's spaceship
+    player.draw(windowSurface)
+
+    # Draw the score and top score.
+    gametext.draw('Score: %s' % (player.getScore()), windowSurface, 10, 5)
+    gametext.draw('Top Score: %s' % (topScore), windowSurface, 10, 30)
+    gametext.draw('Shields: %s' % (player.getShields()), windowSurface, 10, 55)
+
+    pygame.display.update()
 
 def initGame():
     """Initialize pygame, main clock, game window, and font"""
@@ -75,25 +104,27 @@ initGame()
 showStartScreen()
 
 while True:
-    # Set up the start of the game
+    # Initialize lists of sprites
     astroidList = []
     shotList = []
     powerupList = []
     explosionList = []
 
     moveLeft = moveRight = moveUp = moveDown = False
-    player = playership.PlayerShip()
 
+    player = playership.PlayerShip()
     railgun = playershot.Railgun()
     astroidSource = astroid.AstroidField()
     powerupSource = powerup.PowerupSource()
+
     #pygame.mixer.music.play(-1, 0.0)
 
-    while True: # main game loop runs continuously while the game is playing
+    while True:
+    # main game loop runs continuously while the game is playing
 
         for event in pygame.event.get():
             if event.type == QUIT:
-                terminate()
+                terminateGame()
 
             if event.type == KEYDOWN:
                 if event.key == K_LEFT or event.key == ord('a'):
@@ -111,7 +142,7 @@ while True:
 
             if event.type == KEYUP:
                 if event.key == K_ESCAPE:
-                    terminate()
+                    terminateGame()
                 if event.key == K_LEFT or event.key == ord('a'):
                     moveLeft = False
                 if event.key == K_RIGHT or event.key == ord('d'):
@@ -124,14 +155,10 @@ while True:
             if event.type == MOUSEMOTION:
                 player.mouseMove(event)
 
-        # Add new astroids at the top of the screen as needed
+        # Add new astroids, player shots, and powerups as needed
         astroidList.extend(astroidSource.cycle())
-
-        # Add new powerups at the top of the screen as needed
-        powerupList.extend(powerupSource.cycle(player.getShields()))
-
-        # Add new shots as needed
         shotList.extend(railgun.cycle(player.getHitbox()))
+        powerupList.extend(powerupSource.cycle(player.getShields()))
 
         # Move the player's ship around
         if moveLeft and player.notLeftEdge():
@@ -159,10 +186,10 @@ while True:
                 explosionList.remove(e)
 
         # Move player shots up and delete those that have moved past the top
-        for shot in shotList:
-            shot.move()
-            if shot.isOffScreen():
-                shotList.remove(shot)
+        for s in shotList:
+            s.move()
+            if s.isOffScreen():
+                shotList.remove(s)
 
         # Move the powerups down and delete ones that have moved past the bottom
         for p in powerupList:
@@ -194,40 +221,17 @@ while True:
         if damageTaken > 0:
             player.subShields(damageTaken)
 
-        # Draw the game world on the window.
-        windowSurface.fill(BACKGROUND_COLOR)
+        # Draw a single frame of the game world on the windowSurface
+        drawFrame(windowSurface, player, topScore, astroidList, shotList, explosionList, powerupList)
 
-        # Draw each shot
-        for shot in shotList:
-            shot.draw(windowSurface)
-
-        # Draw each astroid
-        for a in astroidList:
-            a.draw(windowSurface)
-
-        # Draw each explosion
-        for e in explosionList:
-            e.draw(windowSurface)
-
-        # Draw each powerup
-        for p in powerupList:
-            p.draw(windowSurface)
-
-        # Draw the player's spaceship
-        player.draw(windowSurface)
-
-        # Draw the score and top score.
-        gametext.draw('Score: %s' % (player.getScore()), windowSurface, 10, 5)
-        gametext.draw('Top Score: %s' % (topScore), windowSurface, 10, 30)
-        gametext.draw('Shields: %s' % (player.getShields()), windowSurface, 10, 55)
-
-        pygame.display.update()
-        mainClock.tick(FRAMES_PER_SEC)
-
+        # Check if player was destroyed and break main game loop
         if player.getShields() == 0:
             if player.getScore() > topScore:
                 topScore = player.getScore() # set new top score
             break
+
+        mainClock.tick(FRAMES_PER_SEC)
+
 
     # Stop the game and show the "Game Over" screen.
     showGameOverScreen()
