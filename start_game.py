@@ -1,3 +1,7 @@
+"""Main script to start space-ranger game
+
+"""
+
 import sys
 sys.path.append('./lib')
 
@@ -14,10 +18,14 @@ from pygame.locals import *
 from gamewindow import *
 
 def terminateGame():
+    """Quits pygame and exits"""
+
     pygame.quit()
     sys.exit()
 
 def waitForPlayerToPressKey():
+    """Waits for the player to press a key on the keyboard"""
+
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -28,6 +36,8 @@ def waitForPlayerToPressKey():
                 return
 
 def playerHasHitAstroid(playerHitbox, astroidList):
+    """Returns the damage recieved if the player has colided with an astroid"""
+
     for a in astroidList:
         if playerHitbox.colliderect(a.getRect()):
             astroidList.remove(a)
@@ -35,18 +45,20 @@ def playerHasHitAstroid(playerHitbox, astroidList):
     return 0
 
 def showStartScreen():
-    # Show the "Start" screen
+    """Show the Start screen before the first time playing"""
+
     gametext.drawCenter('Space Ranger', windowSurface, (WINDOW_HEIGHT / 3))
     gametext.drawCenter('Press a key to start.', windowSurface, (WINDOW_HEIGHT / 3) + 50)
     pygame.display.update()
     waitForPlayerToPressKey()
 
 def showGameOverScreen():
-    # Stop the game and show the "Game Over" screen.
+    """Show the Game Over screen inbetween rounds"""
+
     #pygame.mixer.music.stop()
     #gameOverSound.play()
 
-    # Show "Game Over" screen
+    # Show the "Game Over" screen
     gametext.drawCenter('GAME OVER', windowSurface, (WINDOW_HEIGHT / 3))
     gametext.drawCenter('Score: %s Top Score: %s' % (player.getScore(), topScore), windowSurface, (WINDOW_HEIGHT / 3) + 50)
     gametext.drawCenter('Press any key to play again', windowSurface, (WINDOW_HEIGHT / 3) + 100)
@@ -56,10 +68,12 @@ def showGameOverScreen():
     #gameOverSound.stop()
 
 def drawFrame(windowSurface, player, topScore, astroidList, shotList, explosionList, powerupList):
-    # Draw the game world on the window.
+    """Draw a single frame of world on the screen"""
+
+    # Clear screen with background color
     windowSurface.fill(BACKGROUND_COLOR)
 
-    # Draw each shot
+    # Draw each player shot
     for s in shotList:
         s.draw(windowSurface)
 
@@ -83,9 +97,11 @@ def drawFrame(windowSurface, player, topScore, astroidList, shotList, explosionL
     gametext.draw('Top Score: %s' % (topScore), windowSurface, 10, 30)
     gametext.draw('Shields: %s' % (player.getShields()), windowSurface, 10, 55)
 
+    # Update the game display
     pygame.display.update()
 
 def moveAll(player, astroidList, shotList, explosionList, powerupList):
+    """Move all the game elements for a single frame"""
 
     # Move the player's ship around
     player.move()
