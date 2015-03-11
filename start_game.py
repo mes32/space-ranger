@@ -13,6 +13,7 @@ import astroid
 import explosion
 import playershot
 import powerup
+import gamelevels
 
 from pygame.locals import *
 from gamewindow import *
@@ -47,8 +48,18 @@ def playerHasHitAstroid(playerHitbox, astroidList):
 def showStartScreen():
     """Show the Start screen before the first time playing"""
 
+    windowSurface.fill(BACKGROUND_COLOR)
     gametext.drawCenter('Space Ranger', windowSurface, (WINDOW_HEIGHT / 3))
     gametext.drawCenter('Press a key to start.', windowSurface, (WINDOW_HEIGHT / 3) + 50)
+    pygame.display.update()
+    waitForPlayerToPressKey()
+
+def showLevelScreen(levelName):
+    """Show the level name before the level"""
+
+    windowSurface.fill(BACKGROUND_COLOR)
+    gametext.drawCenter(levelName, windowSurface, (WINDOW_HEIGHT / 3))
+    gametext.drawCenter('Get Ready!', windowSurface, (WINDOW_HEIGHT / 3) + 50)
     pygame.display.update()
     waitForPlayerToPressKey()
 
@@ -163,64 +174,83 @@ while True:
 
     #pygame.mixer.music.play(-1, 0.0)
 
-    while True:
-    # main game loop runs continuously while the game is playing
+    gameOver = False
 
-        # Add new astroids, player shots, and powerups as needed
-        astroidList.extend(astroidSource.cycle())
-        shotList.extend(railgun.cycle(player.getHitbox()))
-        powerupList.extend(powerupSource.cycle(player.getShields()))
+    for level in gamelevels.LEVELS:
 
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                terminateGame()
-            if event.type == KEYDOWN:
-                player.keydownMove(event.key)
-            if event.type == KEYUP:
-                if event.key == K_ESCAPE:
+        showLevelScreen(level.getName())
+
+        levelCount = 0
+        astroidList = []
+        shotList = []
+        powerupList = []
+        explosionList = []
+        player.reset()
+
+        while levelCount < level.getDuration():
+        # main game loop runs continuously while the game is playing
+
+            # Add new astroids, player shots, and powerups as needed
+            astroidList.extend(astroidSource.cycle())
+            shotList.extend(railgun.cycle(player.getHitbox()))
+            powerupList.extend(powerupSource.cycle(player.getShields()))
+
+            for event in pygame.event.get():
+                if event.type == QUIT:
                     terminateGame()
-                else:
-                    player.keyupMove(event.key)
-            if event.type == MOUSEMOTION:
-                player.mouseMove(event)
+                if event.type == KEYDOWN:
+                    player.keydownMove(event.key)
+                if event.type == KEYUP:
+                    if event.key == K_ESCAPE:
+                        terminateGame()
+                    else:
+                        player.keyupMove(event.key)
+                if event.type == MOUSEMOTION:
+                    player.mouseMove(event)
 
-        # Move and update all game elements/sprites
-        moveAll(player, astroidList, shotList, explosionList, powerupList)
+            # Move and update all game elements/sprites
+            moveAll(player, astroidList, shotList, explosionList, powerupList)
 
-        # Check if any powerups have hit the player
-        for p in powerupList:
-            if p.getRect().colliderect(player.getHitbox()):
-                powerupList.remove(p)
-                if (p.getType() == 'shield'):
-                    player.addShields(25)
-                elif (p.getType() == 'plus'):
-                    player.addScore(30)
+            # Check if any powerups have hit the player
+            for p in powerupList:
+                if p.getRect().colliderect(player.getHitbox()):
+                    powerupList.remove(p)
+                    if (p.getType() == 'shield'):
+                        player.addShields(25)
+                    elif (p.getType() == 'plus'):
+                        player.addScore(30)
 
-        # Check if any shots have hit astroids
-        for a in astroidList:
-            for s in shotList:
-                if s.getRect().colliderect(a.getRect()):
-                    shotList.remove(s)
-                    a.takeDamage(s.getDamage())
-                    if a.isDestroyed():
-                        astroidList.remove(a)
-                        explosionList.append(explosion.Explosion(a))
+            # Check if any shots have hit astroids
+            for a in astroidList:
+                for s in shotList:
+                    if s.getRect().colliderect(a.getRect()):
+                        shotList.remove(s)
+                        a.takeDamage(s.getDamage())
+                        if a.isDestroyed():
+                            astroidList.remove(a)
+                            explosionList.append(explosion.Explosion(a))
 
-        # Check if the player has hit an astroid
-        damageTaken = playerHasHitAstroid(player.getHitbox(), astroidList)
-        if damageTaken > 0:
-            player.subShields(damageTaken)
+            # Check if the player has hit an astroid
+            damageTaken = playerHasHitAstroid(player.getHitbox(), astroidList)
+            if damageTaken > 0:
+                player.subShields(damageTaken)
 
-        # Draw a single frame of the game world on the windowSurface
-        drawFrame(windowSurface, player, topScore, astroidList, shotList, explosionList, powerupList)
+            # Draw a single frame of the game world on the windowSurface
+            drawFrame(windowSurface, player, topScore, astroidList, shotList, explosionList, powerupList)
 
-        # Check if player was destroyed and break main game loop
-        if player.getShields() == 0:
-            if player.getScore() > topScore:
-                topScore = player.getScore() # set new top score
+            # Check if player was destroyed and break main game loop
+            if player.getShields() == 0:
+                if player.getScore() > topScore:
+                    topScore = player.getScore() # set new top score
+                gameOver = True
+                break
+
+            mainClock.tick(FRAMES_PER_SEC)
+            levelCount += 1
+
+        if gameOver:
             break
-
-        mainClock.tick(FRAMES_PER_SEC)
+        
 
 
     # Stop the game and show the "Game Over" screen.
