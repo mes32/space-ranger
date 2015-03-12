@@ -37,6 +37,19 @@ def waitForPlayerToPressKey():
                     terminateGame()
                 return
 
+def waitForPlayerYesNo():
+    """Waits for the player to press a key on the keyboard"""
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                terminateGame()
+            if event.type == KEYDOWN:
+                if event.key == ord('n') or event.key == K_ESCAPE: # pressing escape quits
+                    terminateGame()
+                elif event.key == ord('y'):
+                    return
+
 def playerHasHitAstroid(playerHitbox, astroidList):
     """Returns the damage recieved if the player has colided with an astroid"""
 
@@ -67,7 +80,7 @@ def showLevelScreen(levelName):
     windowSurface.fill(BACKGROUND_COLOR)
     gametext.drawCenter(levelName, windowSurface, (WINDOW_HEIGHT / 3))
     pygame.display.update()
-    time.sleep(1.2)
+    time.sleep(0.8)
 
     # Count down the start of the level
     for i in [3, 2, 1]:
@@ -93,10 +106,11 @@ def showGameOverScreen():
 
     # Show the "Game Over" screen
     gametext.drawCenter('GAME OVER', windowSurface, (WINDOW_HEIGHT / 3))
-    gametext.drawCenter('Score: %s Top Score: %s' % (player.getScore(), topScore), windowSurface, (WINDOW_HEIGHT / 3) + 50)
-    gametext.drawCenter('Press any key to play again', windowSurface, (WINDOW_HEIGHT / 3) + 100)
+    gametext.drawCenter('Score: %s' % (player.getScore()), windowSurface, (WINDOW_HEIGHT / 3) + 50)
+    gametext.drawCenter('Top Score: %s' % (topScore), windowSurface, (WINDOW_HEIGHT / 3) + 100)
+    gametext.drawCenter('Play again? [y]es or [n]o', windowSurface, (WINDOW_HEIGHT / 3) + 150)
     pygame.display.update()
-    waitForPlayerToPressKey()
+    waitForPlayerYesNo()
 
     #gameOverSound.stop()
 
@@ -210,6 +224,7 @@ while True:
         shotList = []
         powerupList = []
         explosionList = []
+
         player.reset()
 
         while levelCount < level.getDuration() and gameOver == False:
