@@ -6,6 +6,7 @@ import sys
 sys.path.append('./lib')
 
 import random
+import time
 import pygame
 import gametext
 import playership
@@ -57,11 +58,32 @@ def showStartScreen():
 def showLevelScreen(levelName):
     """Show the level name before the level"""
 
+    # Display a blank screen
+    windowSurface.fill(BACKGROUND_COLOR)
+    pygame.display.update()
+    time.sleep(0.5)
+
+    # Display the name of the level
     windowSurface.fill(BACKGROUND_COLOR)
     gametext.drawCenter(levelName, windowSurface, (WINDOW_HEIGHT / 3))
-    gametext.drawCenter('Get Ready!', windowSurface, (WINDOW_HEIGHT / 3) + 50)
     pygame.display.update()
-    waitForPlayerToPressKey()
+    time.sleep(1.2)
+
+    # Count down the start of the level
+    for i in [3, 2, 1]:
+        windowSurface.fill(BACKGROUND_COLOR)
+        gametext.drawCenter(levelName, windowSurface, (WINDOW_HEIGHT / 3))
+        gametext.drawCenter('Ready...' + str(i), windowSurface, (WINDOW_HEIGHT / 3) + 50)
+        pygame.display.update()
+        time.sleep(0.8)
+
+    # After last count display GO!
+    windowSurface.fill(BACKGROUND_COLOR)
+    gametext.drawCenter(levelName, windowSurface, (WINDOW_HEIGHT / 3))
+    gametext.drawCenter('Ready...GO!', windowSurface, (WINDOW_HEIGHT / 3) + 50)
+    pygame.display.update()
+    time.sleep(1.2)
+
 
 def showGameOverScreen():
     """Show the Game Over screen inbetween rounds"""
@@ -178,6 +200,9 @@ while True:
 
     for level in gamelevels.LEVELS:
 
+        if gameOver == True:
+            break
+
         showLevelScreen(level.getName())
 
         levelCount = 0
@@ -187,13 +212,14 @@ while True:
         explosionList = []
         player.reset()
 
-        while levelCount < level.getDuration():
+        while levelCount < level.getDuration() and gameOver == False:
         # main game loop runs continuously while the game is playing
 
             # Add new astroids, player shots, and powerups as needed
-            astroidList.extend(astroidSource.cycle())
             shotList.extend(railgun.cycle(player.getHitbox()))
-            powerupList.extend(powerupSource.cycle(player.getShields()))
+            if levelCount < level.getDuration() - level.getWashout():
+                astroidList.extend(astroidSource.cycle())
+                powerupList.extend(powerupSource.cycle(player.getShields()))
 
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -247,11 +273,6 @@ while True:
 
             mainClock.tick(FRAMES_PER_SEC)
             levelCount += 1
-
-        if gameOver:
-            break
-        
-
 
     # Stop the game and show the "Game Over" screen.
     showGameOverScreen()
