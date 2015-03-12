@@ -193,24 +193,18 @@ def initGame():
     #gameOverSound = pygame.mixer.Sound('gameover.wav')
     #pygame.mixer.music.load('background.mid')
 
+
 initGame()
 showStartScreen()
 
 while True:
-    # Initialize lists of sprites
-    astroidList = []
-    shotList = []
-    powerupList = []
-    explosionList = []
-
-    player = playership.PlayerShip()
-    railgun = playershot.Railgun()
-    astroidSource = astroid.AstroidField()
-    powerupSource = powerup.PowerupSource()
 
     #pygame.mixer.music.play(-1, 0.0)
 
     gameOver = False
+
+    player = playership.PlayerShip()
+    railgun = playershot.Railgun()
 
     for level in gamelevels.LEVELS:
 
@@ -220,12 +214,16 @@ while True:
         showLevelScreen(level.getName())
 
         levelCount = 0
+
+        # Initialize lists of non-player sprites
         astroidList = []
         shotList = []
         powerupList = []
         explosionList = []
 
         player.reset()
+        astroidSource = level.getAstroidField()
+        powerupSource = level.getPowerupSource()
 
         while levelCount < level.getDuration() and gameOver == False:
         # main game loop runs continuously while the game is playing
@@ -236,6 +234,7 @@ while True:
                 astroidList.extend(astroidSource.cycle())
                 powerupList.extend(powerupSource.cycle(player.getShields()))
 
+            # Listen for keyboard inputs
             for event in pygame.event.get():
                 if event.type == QUIT:
                     terminateGame()

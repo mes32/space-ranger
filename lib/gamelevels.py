@@ -2,6 +2,9 @@
 
 """
 
+import astroid
+import powerup
+
 class Level:
     """A level of the game"""
 
@@ -20,6 +23,14 @@ class Level:
     def getWashout(self):
         """Returns the duration of the washout after the level in frames"""
         return 500
+
+    def getAstroidField(self):
+        """Returns the astroid source for the level"""
+        return astroid.AstroidField()
+
+    def getPowerupSource(self):
+        """Returns the astroid source for the level"""
+        return powerup.PowerupSource()
 
 # List of each of the levels in the game
 LEVELS = [
