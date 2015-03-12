@@ -105,10 +105,12 @@ def showGameOverScreen():
     #gameOverSound.play()
 
     # Show the "Game Over" screen
+    gametext.drawCenter('________________________', windowSurface, (WINDOW_HEIGHT / 3) - 27)
     gametext.drawCenter('GAME OVER', windowSurface, (WINDOW_HEIGHT / 3))
+    gametext.drawCenter('________________________', windowSurface, (WINDOW_HEIGHT / 3) + 5)
     gametext.drawCenter('Score: %s' % (player.getScore()), windowSurface, (WINDOW_HEIGHT / 3) + 50)
     gametext.drawCenter('Top Score: %s' % (topScore), windowSurface, (WINDOW_HEIGHT / 3) + 100)
-    gametext.drawCenter('Play again? [y]es or [n]o', windowSurface, (WINDOW_HEIGHT / 3) + 150)
+    gametext.drawCenter('Play again?    [y]es or [n]o', windowSurface, (WINDOW_HEIGHT / 3) + 200)
     pygame.display.update()
     waitForPlayerYesNo()
 
