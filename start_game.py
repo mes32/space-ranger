@@ -80,7 +80,7 @@ def showLevelScreen(levelName):
     windowSurface.fill(BACKGROUND_COLOR)
     gametext.drawCenter(levelName, windowSurface, (WINDOW_HEIGHT / 3))
     pygame.display.update()
-    time.sleep(0.8)
+    time.sleep(0.5)
 
     # Count down the start of the level
     for i in [3, 2, 1]:
@@ -105,9 +105,9 @@ def showGameOverScreen():
     #gameOverSound.play()
 
     # Show the "Game Over" screen
-    gametext.drawCenter('________________________', windowSurface, (WINDOW_HEIGHT / 3) - 27)
+    gametext.drawCenter('__________________________', windowSurface, (WINDOW_HEIGHT / 3) - 27)
     gametext.drawCenter('GAME OVER', windowSurface, (WINDOW_HEIGHT / 3))
-    gametext.drawCenter('________________________', windowSurface, (WINDOW_HEIGHT / 3) + 5)
+    gametext.drawCenter('__________________________', windowSurface, (WINDOW_HEIGHT / 3) + 5)
     gametext.drawCenter('Score: %s' % (player.getScore()), windowSurface, (WINDOW_HEIGHT / 3) + 50)
     gametext.drawCenter('Top Score: %s' % (topScore), windowSurface, (WINDOW_HEIGHT / 3) + 100)
     gametext.drawCenter('Play again?    [y]es or [n]o', windowSurface, (WINDOW_HEIGHT / 3) + 200)
@@ -263,8 +263,8 @@ while True:
                         player.addScore(30)
 
             # Check if any shots have hit astroids
-            for a in astroidList:
-                for s in shotList:
+            for s in shotList:
+                for a in astroidList:
                     if s.getRect().colliderect(a.getRect()):
                         shotList.remove(s)
                         a.takeDamage(s.getDamage())
