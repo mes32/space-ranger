@@ -263,8 +263,8 @@ while True:
                         player.addScore(30)
 
             # Check if any shots have hit astroids
-            for s in shotList:
-                for a in astroidList:
+            for a in astroidList:
+                for s in shotList:
                     if s.getRect().colliderect(a.getRect()):
                         shotList.remove(s)
                         a.takeDamage(s.getDamage())
