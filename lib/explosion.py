@@ -11,23 +11,40 @@ class Explosion:
     """Represents an exploding astroid"""
 
     def __init__(self, astroid):
-        self.rect = astroid.getRect()
-        self.speed = astroid.getSpeed()
+
         self.size = astroid.getSize()
+        self.originalSize = self.size
         self.surface = pygame.transform.scale(EXPLOSION_IMAGE, (self.size, self.size))
-        self.stage = 1
+
+        self.rect = astroid.getRect()
+        self.startX = astroid.getStartX()
+        self.startY = astroid.getStartY()
+
+        self.speed = astroid.getSpeed()
         self.angle = astroid.getAngle()
+        self.step = astroid.getStep()
+
+        self.stage = 1
                        
     def move(self):
         """Move explosion and evolve animation"""
-        self.rect.move_ip(self.speed*math.sin(self.angle), self.speed*math.cos(self.angle))
 
-        # Animate explosion expanding for a few frames/stages
+        self.step += 1
         self.stage += 1
-        oldSize = self.size
-        self.size = int(oldSize*1.25)
+        
+        x = self.rect.x
+        y = self.rect.y
+
+        trueX = self.startX + self.speed*self.step*math.sin(math.radians(self.angle))
+        trueY = self.startY + self.speed*self.step*math.cos(math.radians(self.angle))
+
+        self.size = int(self.originalSize*1.2**self.stage)
         self.surface = pygame.transform.scale(EXPLOSION_IMAGE, (self.size, self.size))
-        self.rect.move_ip(int((oldSize - self.size)/2), int((oldSize - self.size)/2))
+
+        deltaX = trueX - x - (self.size-self.originalSize)/2
+        deltaY = trueY - y - (self.size-self.originalSize)/2
+
+        self.rect.move_ip(deltaX, deltaY)
 
     def draw(self, windowSurface):
         """Draws the explosion on the screen"""

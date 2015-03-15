@@ -34,13 +34,19 @@ class AstroidField:
 class Astroid:
 
     def __init__(self, minSize, maxSize, minSpeed, maxSpeed):
+
         self.size = random.randint(minSize, maxSize)
-        self.rect = pygame.Rect(random.randint(0, gamewindow.WINDOW_WIDTH-self.size), 0 - self.size, self.size, self.size*.6)
-        self.speed = random.randint(minSpeed, maxSpeed)
         self.surface = pygame.transform.scale(ASTROID_IMAGE, (self.size, self.size))
         self.mass = int(self.size^3)
         self.health = int(self.size^3)
-        self.angle = 0
+
+        self.rect = pygame.Rect(random.randint(0, gamewindow.WINDOW_WIDTH-self.size), 0 - self.size, self.size, self.size*.6)
+        self.startX = self.rect.x
+        self.startY = self.rect.y
+
+        self.speed = random.randint(minSpeed, maxSpeed)
+        self.angle = 20
+        self.step = 0
 
     def getRect(self):
         return self.rect
@@ -57,8 +63,28 @@ class Astroid:
     def getAngle(self):
         return self.angle
 
+    def getStartX(self):
+        return self.startX
+
+    def getStartY(self):
+        return self.startY
+
+    def getStep(self):
+        return self.step
+
     def move(self):
-        self.rect.move_ip(self.speed*math.sin(self.angle), self.speed*math.cos(self.angle))
+        self.step += 1
+        
+        x = self.rect.x
+        y = self.rect.y
+
+        trueX = self.startX + self.speed*self.step*math.sin(math.radians(self.angle))
+        trueY = self.startY + self.speed*self.step*math.cos(math.radians(self.angle))
+
+        deltaX = trueX - x
+        deltaY = trueY - y
+
+        self.rect.move_ip(deltaX, deltaY)
 
     def isOffScreen(self):
         if self.rect.top > gamewindow.WINDOW_HEIGHT:
