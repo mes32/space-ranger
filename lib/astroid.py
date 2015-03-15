@@ -1,3 +1,4 @@
+import math
 import random
 import pygame
 import gamewindow
@@ -39,6 +40,7 @@ class Astroid:
         self.surface = pygame.transform.scale(ASTROID_IMAGE, (self.size, self.size))
         self.mass = int(self.size^3)
         self.health = int(self.size^3)
+        self.angle = 0
 
     def getRect(self):
         return self.rect
@@ -52,8 +54,11 @@ class Astroid:
     def getMass(self):
         return self.mass
 
+    def getAngle(self):
+        return self.angle
+
     def move(self):
-        self.rect.move_ip(0, self.speed)
+        self.rect.move_ip(self.speed*math.sin(self.angle), self.speed*math.cos(self.angle))
 
     def isOffScreen(self):
         if self.rect.top > gamewindow.WINDOW_HEIGHT:

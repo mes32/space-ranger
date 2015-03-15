@@ -2,6 +2,7 @@
 
 """
 
+import math
 import pygame
 
 EXPLOSION_IMAGE = pygame.image.load('./resources/images/astroidExplosion.png')
@@ -15,10 +16,11 @@ class Explosion:
         self.size = astroid.getSize()
         self.surface = pygame.transform.scale(EXPLOSION_IMAGE, (self.size, self.size))
         self.stage = 1
+        self.angle = astroid.getAngle()
                        
     def move(self):
         """Move explosion and evolve animation"""
-        self.rect.move_ip(0, self.speed)
+        self.rect.move_ip(self.speed*math.sin(self.angle), self.speed*math.cos(self.angle))
 
         # Animate explosion expanding for a few frames/stages
         self.stage += 1
