@@ -78,22 +78,28 @@ def showLevelScreen(levelName):
 
     # Display the name of the level
     windowSurface.fill(BACKGROUND_COLOR)
+    gametext.drawCenter('____________________', windowSurface, (WINDOW_HEIGHT / 3) - 27)
     gametext.drawCenter(levelName, windowSurface, (WINDOW_HEIGHT / 3))
+    gametext.drawCenter('____________________', windowSurface, (WINDOW_HEIGHT / 3) + 5)
     pygame.display.update()
     time.sleep(0.5)
 
     # Count down the start of the level
     for i in [3, 2, 1]:
         windowSurface.fill(BACKGROUND_COLOR)
+        gametext.drawCenter('____________________', windowSurface, (WINDOW_HEIGHT / 3) - 27)
         gametext.drawCenter(levelName, windowSurface, (WINDOW_HEIGHT / 3))
-        gametext.drawCenter('Ready...' + str(i), windowSurface, (WINDOW_HEIGHT / 3) + 50)
+        gametext.drawCenter('____________________', windowSurface, (WINDOW_HEIGHT / 3) + 5)
+        gametext.drawCenter('Ready...' + str(i), windowSurface, (WINDOW_HEIGHT / 3) + 100)
         pygame.display.update()
         time.sleep(0.8)
 
     # After last count display GO!
     windowSurface.fill(BACKGROUND_COLOR)
+    gametext.drawCenter('____________________', windowSurface, (WINDOW_HEIGHT / 3) - 27)
     gametext.drawCenter(levelName, windowSurface, (WINDOW_HEIGHT / 3))
-    gametext.drawCenter('Ready...GO!', windowSurface, (WINDOW_HEIGHT / 3) + 50)
+    gametext.drawCenter('____________________', windowSurface, (WINDOW_HEIGHT / 3) + 5)
+    gametext.drawCenter('Ready...GO!', windowSurface, (WINDOW_HEIGHT / 3) + 100)
     pygame.display.update()
     time.sleep(1.2)
 
@@ -142,9 +148,8 @@ def drawFrame(windowSurface, player, topScore, astroidList, shotList, explosionL
     player.draw(windowSurface)
 
     # Draw the score and top score.
-    gametext.draw('Score: %s' % (player.getScore()), windowSurface, 10, 5)
-    gametext.draw('Top Score: %s' % (topScore), windowSurface, 10, 30)
-    gametext.draw('Shields: %s' % (player.getShields()), windowSurface, 10, 55)
+    gametext.drawHUD('Score: %s' % (player.getScore()), windowSurface, 10, 5)
+    gametext.drawHUD('Shields: %s' % (player.getShields()), windowSurface, 10, 30)
 
     # Update the game display
     pygame.display.update()

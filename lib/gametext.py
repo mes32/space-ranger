@@ -5,7 +5,8 @@
 import pygame
 from gamewindow import *
 
-TEXT_COLOR = (155, 155, 255)
+TEXT_COLOR = (240, 240, 240)
+HUD_TEXT_COLOR = (155, 155, 255)
 
 def initFont():
     """Initializes the game FONT for later use.
@@ -30,4 +31,11 @@ def drawCenter(text, surface, y):
     textrect = textobj.get_rect()
     textrect.centery = y
     textrect.centerx = WINDOW_WIDTH/2
+    surface.blit(textobj, textrect)
+
+def drawHUD(text, surface, x, y):
+    """Draws text representing the player's heads up display (HUD) on the game window at the x-y coordinates"""
+    textobj = FONT.render(text, 1, HUD_TEXT_COLOR)
+    textrect = textobj.get_rect()
+    textrect.topleft = (x, y)
     surface.blit(textobj, textrect)
