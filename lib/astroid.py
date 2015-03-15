@@ -16,24 +16,25 @@ ASTROID_IMAGE = pygame.image.load('./resources/images/astroid.png')
 class AstroidField:
     counter = 0
 
-    def __init__(self, minSize, maxSize, minSpeed, maxSpeed, addRate):
+    def __init__(self, minSize, maxSize, minSpeed, maxSpeed, sigmaDegrees, addRate):
         self.minSize = minSize
         self.maxSize = maxSize
         self.minSpeed = minSpeed
         self.maxSpeed = maxSpeed
+        self.sigmaDegrees = sigmaDegrees
         self.addRate = addRate
 
     def cycle(self):
         AstroidField.counter += 1
         if AstroidField.counter == self.addRate:
             AstroidField.counter = 0
-            return [Astroid(self.minSize, self.maxSize, self.minSpeed, self.maxSpeed)]
+            return [Astroid(self.minSize, self.maxSize, self.minSpeed, self.maxSpeed, self.sigmaDegrees)]
         else:
             return []
 
 class Astroid:
 
-    def __init__(self, minSize, maxSize, minSpeed, maxSpeed):
+    def __init__(self, minSize, maxSize, minSpeed, maxSpeed, sigmaDegrees):
 
         self.size = random.randint(minSize, maxSize)
         self.surface = pygame.transform.scale(ASTROID_IMAGE, (self.size, self.size))
@@ -45,7 +46,7 @@ class Astroid:
         self.startY = self.rect.y
 
         self.speed = random.randint(minSpeed, maxSpeed)
-        self.angle = 20
+        self.angle = random.gauss(0, sigmaDegrees)
         self.step = 0
 
     def getRect(self):
