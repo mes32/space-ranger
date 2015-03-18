@@ -3,6 +3,7 @@
 """
 
 import pygame
+import playershot
 from pygame.locals import *
 from gamewindow import *
 
@@ -21,10 +22,13 @@ class PlayerShip:
         self.image = PLAYER_IMAGE_STANDARD
         self.hitbox = self.image.get_rect()
         self.hitbox.topleft = ((WINDOW_WIDTH / 2) - self.hitbox.centerx, WINDOW_HEIGHT - 50)
+        self.selectedWeapon = playershot.PlasmaCannons()
+
         self.isDestroyed = False
         self.shields = 100
         self.shieldBlink = 0
         self.score = 0
+
         self.movingLeft = self.movingRight = self.movingUp = self.movingDown = False
 
     def reset(self):
@@ -58,6 +62,10 @@ class PlayerShip:
         if event_key == K_DOWN or event_key == ord('s'):
             self.movingUp = False
             self.movingDown = True
+        if event_key == ord('2'):
+            self.selectedWeapon = playershot.Railgun()
+        if event_key == ord('1'):
+            self.selectedWeapon = playershot.PlasmaCannons()
 
     def keyupMove(self, event_key):
         if event_key == K_LEFT or event_key == ord('a'):
@@ -140,6 +148,9 @@ class PlayerShip:
             self.image = PLAYER_IMAGE_SHIELD_BLINK
         else:
             self.image = PLAYER_IMAGE_STANDARD
+
+    def cycleWeapon(self):
+        return self.selectedWeapon.cycle(self.getHitbox())
 
     def getHitbox(self):
         """Returns the hitbox attribute for the player avatar"""

@@ -209,9 +209,7 @@ while True:
     #pygame.mixer.music.play(-1, 0.0)
 
     gameOver = False
-
     player = playership.PlayerShip()
-    railgun = playershot.Railgun()
 
     for level in gamelevels.LEVELS:
 
@@ -236,7 +234,7 @@ while True:
         # main game loop runs continuously while the game is playing
 
             # Add new astroids, player shots, and powerups as needed
-            shotList.extend(railgun.cycle(player.getHitbox()))
+            shotList.extend(player.cycleWeapon())
             if levelCount < level.getDuration() - level.getWashout():
                 astroidList.extend(astroidSource.cycle())
                 powerupList.extend(powerupSource.cycle(player.getShields()))
@@ -268,14 +266,16 @@ while True:
                         player.addScore(30)
 
             # Check if any shots have hit astroids
-            for a in astroidList:
-                for s in shotList:
+            for s in shotList:
+                for a in astroidList:
                     if s.getRect().colliderect(a.getRect()):
                         shotList.remove(s)
-                        a.takeDamage(s.getDamage())
                         if a.isDestroyed():
                             astroidList.remove(a)
                             explosionList.append(explosion.Explosion(a))
+                        else:
+                            a.takeDamage(s.getDamage())
+                        break
 
             # Check if the player has hit an astroid
             damageTaken = playerHasHitAstroid(player.getHitbox(), astroidList)
