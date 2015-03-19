@@ -3,6 +3,7 @@
 """
 
 import pygame
+import playerexhaust
 import playershot
 from pygame.locals import *
 from gamewindow import *
@@ -29,6 +30,7 @@ class PlayerShip:
         self.shieldBlink = 0
         self.score = 0
 
+        self.exhaust = playerexhaust.Exhaust()
         self.movingLeft = self.movingRight = self.movingUp = self.movingDown = False
 
     def reset(self):
@@ -134,6 +136,7 @@ class PlayerShip:
     def draw(self, windowSurface):
         """Draws the player avatar on the screen with an up-to-date image"""
         self.updateImage()
+        self.exhaust.draw(windowSurface, self.hitbox, self.movingUp, self.movingDown)
         windowSurface.blit(self.image, self.hitbox)
 
     def updateImage(self):

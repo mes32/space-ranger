@@ -5,7 +5,6 @@
 import sys
 sys.path.append('./lib')
 
-import random
 import time
 import pygame
 import gametext
