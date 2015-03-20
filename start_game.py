@@ -77,27 +77,21 @@ def showLevelScreen(levelName):
 
     # Display the name of the level
     windowSurface.fill(BACKGROUND_COLOR)
-    gametext.drawCenter('____________________', windowSurface, (WINDOW_HEIGHT / 3) - 27)
-    gametext.drawCenter(levelName, windowSurface, (WINDOW_HEIGHT / 3))
-    gametext.drawCenter('____________________', windowSurface, (WINDOW_HEIGHT / 3) + 5)
+    gametext.drawCenterWithBars(levelName, windowSurface, (WINDOW_HEIGHT / 3))
     pygame.display.update()
     time.sleep(0.5)
 
     # Count down the start of the level
     for i in [3, 2, 1]:
         windowSurface.fill(BACKGROUND_COLOR)
-        gametext.drawCenter('____________________', windowSurface, (WINDOW_HEIGHT / 3) - 27)
-        gametext.drawCenter(levelName, windowSurface, (WINDOW_HEIGHT / 3))
-        gametext.drawCenter('____________________', windowSurface, (WINDOW_HEIGHT / 3) + 5)
+        gametext.drawCenterWithBars(levelName, windowSurface, (WINDOW_HEIGHT / 3))
         gametext.drawCenter('Ready...' + str(i), windowSurface, (WINDOW_HEIGHT / 3) + 100)
         pygame.display.update()
         time.sleep(0.8)
 
     # After last count display GO!
     windowSurface.fill(BACKGROUND_COLOR)
-    gametext.drawCenter('____________________', windowSurface, (WINDOW_HEIGHT / 3) - 27)
-    gametext.drawCenter(levelName, windowSurface, (WINDOW_HEIGHT / 3))
-    gametext.drawCenter('____________________', windowSurface, (WINDOW_HEIGHT / 3) + 5)
+    gametext.drawCenterWithBars(levelName, windowSurface, (WINDOW_HEIGHT / 3))
     gametext.drawCenter('Ready...GO!', windowSurface, (WINDOW_HEIGHT / 3) + 100)
     pygame.display.update()
     time.sleep(1.2)
@@ -110,9 +104,7 @@ def showGameOverScreen():
     #gameOverSound.play()
 
     # Show the "Game Over" screen
-    gametext.drawCenter('__________________________', windowSurface, (WINDOW_HEIGHT / 3) - 27)
-    gametext.drawCenter('GAME OVER', windowSurface, (WINDOW_HEIGHT / 3))
-    gametext.drawCenter('__________________________', windowSurface, (WINDOW_HEIGHT / 3) + 5)
+    gametext.drawCenterWithBars('GAME OVER', windowSurface, (WINDOW_HEIGHT / 3))
     gametext.drawCenter('Score: %s' % (player.getScore()), windowSurface, (WINDOW_HEIGHT / 3) + 50)
     gametext.drawCenter('Top Score: %s' % (topScore), windowSurface, (WINDOW_HEIGHT / 3) + 100)
     gametext.drawCenter('Play again?    [y]es or [n]o', windowSurface, (WINDOW_HEIGHT / 3) + 200)
