@@ -25,7 +25,7 @@ class PlayerShip:
         self.hitbox.topleft = ((WINDOW_WIDTH / 2) - self.hitbox.centerx, WINDOW_HEIGHT - 50)
         self.selectedWeapon = playershot.PlasmaCannons()
 
-        self.isDestroyed = False
+        self.destroyed = False
         self.shields = 100
         self.shieldBlink = 0
         self.score = 0
@@ -163,7 +163,7 @@ class PlayerShip:
 
         Show shields blinking when hit and the ship exploding when destroyed.
         """
-        if self.isDestroyed == True:
+        if self.destroyed == True:
             self.image = PLAYER_IMAGE_EXPLOSION
         elif self.shieldBlink > 0:
             self.shieldBlink -= 1
@@ -196,7 +196,7 @@ class PlayerShip:
 
         # If damage would make shields negative the ship is destroyed
         if self.shields < 0:
-            self.isDestroyed = True
+            self.destroyed = True
             self.shields = 0
 
         # Shields visibly "blink" in response to damage for 8 cylces
@@ -214,5 +214,5 @@ class PlayerShip:
 
     def isDestroyed(self):
         """Indicates whether the player's spaceship has been destroyed"""
-        return isDestroyed
+        return self.destroyed
 

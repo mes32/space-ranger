@@ -276,7 +276,7 @@ while True:
             drawFrame(windowSurface, player, topScore, astroidList, shotList, explosionList, powerupList)
 
             # Check if player was destroyed and break main game loop
-            if player.getShields() == 0:
+            if player.isDestroyed():
                 if player.getScore() > topScore:
                     topScore = player.getScore() # set new top score
                 gameOver = True
