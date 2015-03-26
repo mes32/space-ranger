@@ -175,6 +175,35 @@ def moveAll(player, astroidList, shotList, explosionList, powerupList):
         if p.isOffScreen():
             powerupList.remove(p)
 
+def checkCollisions(player, astroidList, shotList, powerupList):
+    """Check for all relavant collisions between game elements"""
+
+    # Check if any powerups have hit the player
+    for p in powerupList:
+        if p.getRect().colliderect(player.getHitbox()):
+            powerupList.remove(p)
+            if (p.getType() == 'shield'):
+                player.addShields(25)
+            elif (p.getType() == 'plus'):
+                player.addScore(30)
+
+    # Check if any shots have hit astroids
+    for s in shotList:
+        for a in astroidList:
+            if s.getRect().colliderect(a.getRect()):
+                shotList.remove(s)
+                if a.isDestroyed():
+                    astroidList.remove(a)
+                    explosionList.append(explosion.Explosion(a))
+                else:
+                    a.takeDamage(s.getDamage())
+                break
+
+    # Check if the player has hit an astroid
+    damageTaken = playerHasHitAstroid(player.getHitbox(), astroidList)
+    if damageTaken > 0:
+        player.subShields(damageTaken)
+
 def initGame():
     """Initialize pygame, main clock, game window, and font"""
     pygame.init()
@@ -246,31 +275,8 @@ while True:
             # Move and update all game elements/sprites
             moveAll(player, astroidList, shotList, explosionList, powerupList)
 
-            # Check if any powerups have hit the player
-            for p in powerupList:
-                if p.getRect().colliderect(player.getHitbox()):
-                    powerupList.remove(p)
-                    if (p.getType() == 'shield'):
-                        player.addShields(25)
-                    elif (p.getType() == 'plus'):
-                        player.addScore(30)
-
-            # Check if any shots have hit astroids
-            for s in shotList:
-                for a in astroidList:
-                    if s.getRect().colliderect(a.getRect()):
-                        shotList.remove(s)
-                        if a.isDestroyed():
-                            astroidList.remove(a)
-                            explosionList.append(explosion.Explosion(a))
-                        else:
-                            a.takeDamage(s.getDamage())
-                        break
-
-            # Check if the player has hit an astroid
-            damageTaken = playerHasHitAstroid(player.getHitbox(), astroidList)
-            if damageTaken > 0:
-                player.subShields(damageTaken)
+            # Check for collisions between game elements/sprites
+            checkCollisions(player, astroidList, shotList, powerupList)
 
             # Draw a single frame of the game world on the windowSurface
             drawFrame(windowSurface, player, topScore, astroidList, shotList, explosionList, powerupList)
