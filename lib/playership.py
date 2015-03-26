@@ -42,16 +42,22 @@ class PlayerShip:
         self.movingLeft = self.movingRight = self.movingUp = self.movingDown = False
 
     def move(self):
-        if self.movingLeft and self.notLeftEdge():
+        """Moves the location of the player based on movement inputs, keeping them in the bounds of the screen"""
+
+        if self.movingLeft and not self.onLeftEdge():
             self.hitbox.move_ip(-1 * PLAYER_SPEED, 0)
-        if self.movingRight and self.notRightEdge():
+        elif self.movingRight and not self.onRightEdge():
             self.hitbox.move_ip(PLAYER_SPEED, 0)
-        if self.movingUp and self.notTopEdge():
+
+        if self.movingUp and not self.onTopEdge():
             self.hitbox.move_ip(0, -1 * PLAYER_SPEED)
-        if self.movingDown and self.notBottomEdge():
+        elif self.movingDown and not self.onBottomEdge():
             self.hitbox.move_ip(0, PLAYER_SPEED)
 
+        self.mouseCursorFollow()
+
     def keydownMove(self, event_key):
+        """Updates player based on key down events"""
         if event_key == K_LEFT or event_key == ord('a'):
             self.movingRight = False
             self.movingLeft = True
@@ -70,6 +76,7 @@ class PlayerShip:
             self.selectedWeapon = playershot.PlasmaCannons()
 
     def keyupMove(self, event_key):
+        """Updates player based on key up events"""
         if event_key == K_LEFT or event_key == ord('a'):
             self.movingLeft = False
         if event_key == K_RIGHT or event_key == ord('d'):
@@ -81,50 +88,62 @@ class PlayerShip:
 
     def mouseMove(self, event):
         """Move the avatar on the screen based on mouse movement events"""
-        self.hitbox.move_ip(event.pos[0] - self.hitbox.centerx, event.pos[1] - self.hitbox.centery)
+        mouseX = event.pos[0]
+        mouseY = event.pos[1]
+        self.hitbox.move_ip(mouseX - self.hitbox.centerx, mouseY - self.hitbox.centery)
 
         # Keep avatar inside the bounds of the screen
-        if self.hitbox.top < 0:
+        if self.onTopEdge():
             height = self.hitbox.height
             self.hitbox.top = 0
             self.hitbox.bottom = height
-        elif self.hitbox.bottom > WINDOW_HEIGHT:
+        elif self.onBottomEdge():
             height = self.hitbox.height
             self.hitbox.bottom = WINDOW_HEIGHT
             self.hitbox.top = WINDOW_HEIGHT - height
-        if self.hitbox.left < 0:
+
+        if self.onLeftEdge():
             width = self.hitbox.width
             self.hitbox.left = 0
             self.hitbox.right = width
-        elif self.hitbox.right > WINDOW_WIDTH:
+        elif self.onRightEdge():
             width = self.hitbox.width
             self.hitbox.right = WINDOW_WIDTH
             self.hitbox.left = WINDOW_WIDTH - width
 
-    def notLeftEdge(self):
+        # Set movement for puposes of exhaust animation
+        #if mouseY == self.hitbox.centery:
+        #    self.movingUp = False
+        #    self.movingDown = False
+        #if mouseY > self.hitbox.centery:
+        #    self.movingUp = True
+        #elif mouseY < self.hitbox.centery:
+        #    self.movingDown = True
+
+    def onLeftEdge(self):
         """Return True if the avatar is not past the leftward edge of the screen"""
-        if self.hitbox.left > 0:
+        if self.hitbox.left <= 0:
             return True
         else:
             return False
 
-    def notRightEdge(self):
+    def onRightEdge(self):
         """Return True if the avatar is not past the rightward edge of the screen"""
-        if self.hitbox.right < WINDOW_WIDTH:
+        if self.hitbox.right >= WINDOW_WIDTH:
             return True
         else:
             return False
 
-    def notTopEdge(self):
+    def onTopEdge(self):
         """Return True if the avatar is not past the top edge of the screen"""
-        if self.hitbox.top > 0:
+        if self.hitbox.top <= 0:
             return True
         else:
             return False
 
-    def notBottomEdge(self):
+    def onBottomEdge(self):
         """Return True if the avatar is not past the bottom edge of the screen"""
-        if self.hitbox.bottom < WINDOW_HEIGHT:
+        if self.hitbox.bottom >= WINDOW_HEIGHT:
             return True
         else:
             return False

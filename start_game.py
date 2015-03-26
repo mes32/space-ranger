@@ -150,7 +150,6 @@ def moveAll(player, astroidList, shotList, explosionList, powerupList):
 
     # Move the player's ship around
     player.move()
-    player.mouseCursorFollow()
 
     # Move astroids down the screen
     for a in astroidList:
@@ -230,7 +229,7 @@ while True:
                 astroidList.extend(astroidSource.cycle())
                 powerupList.extend(powerupSource.cycle(player.getShields()))
 
-            # Listen for keyboard inputs
+            # Listen for keyboard and mouse inputs
             for event in pygame.event.get():
                 if event.type == QUIT:
                     terminateGame()
