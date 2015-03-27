@@ -12,13 +12,6 @@ class Level:
     def __init__(self, name, duration, sizeRange, speedRange, sigmaDegrees, addRate):
         self.name = name
         self.duration = duration * FRAMES_PER_SEC
-        #self.minSize = sizeRange[0]
-        #self.maxSize = sizeRange[1]
-        #self.minSpeed = minSpeed
-        #self.maxSpeed = maxSpeed
-        #self.sigmaDegrees = sigmaDegrees
-        #self.addRate = addRate
-
         self.astroidField = astroid.AstroidField(sizeRange, speedRange, sigmaDegrees, addRate)
 
     def getName(self):
