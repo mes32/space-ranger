@@ -5,8 +5,9 @@
 import pygame
 import playerexhaust
 import playershot
+
 from pygame.locals import *
-from gamewindow import *
+from gamewindow import WINDOW_WIDTH, WINDOW_HEIGHT
 
 PLAYER_SPEED = 5   # Rate at which player avatar moves on screen (pixels/per-game-cycle)
 

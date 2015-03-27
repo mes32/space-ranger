@@ -5,7 +5,8 @@
 import random
 import pygame
 import gamewindow
-from gamewindow import *
+
+from gamewindow import WINDOW_WIDTH, WINDOW_HEIGHT
 
 POWERUP_SPEED_MIN = 1   # Minimum speed powerups will fall at (1 pixel per frame)
 POWERUP_SPEED_MAX = 4   # Maximum speed powerups will fall at

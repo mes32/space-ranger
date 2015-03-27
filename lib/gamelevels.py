@@ -4,7 +4,7 @@
 
 import astroid
 import powerup
-from gamewindow import *
+from gamewindow import FRAMES_PER_SEC
 
 class Level:
     """A level of the game"""
