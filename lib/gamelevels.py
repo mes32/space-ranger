@@ -9,17 +9,17 @@ from gamewindow import *
 class Level:
     """A level of the game"""
 
-    def __init__(self, name, duration, minSize, maxSize, minSpeed, maxSpeed, sigmaDegrees, addRate):
+    def __init__(self, name, duration, sizeRange, speedRange, sigmaDegrees, addRate):
         self.name = name
         self.duration = duration * FRAMES_PER_SEC
-        self.minSize = minSize
-        self.maxSize = maxSize
-        self.minSpeed = minSpeed
-        self.maxSpeed = maxSpeed
-        self.sigmaDegrees = sigmaDegrees
-        self.addRate = addRate
+        #self.minSize = sizeRange[0]
+        #self.maxSize = sizeRange[1]
+        #self.minSpeed = minSpeed
+        #self.maxSpeed = maxSpeed
+        #self.sigmaDegrees = sigmaDegrees
+        #self.addRate = addRate
 
-        self.astroidField = astroid.AstroidField(minSize, maxSize, minSpeed, maxSpeed, sigmaDegrees, addRate)
+        self.astroidField = astroid.AstroidField(sizeRange, speedRange, sigmaDegrees, addRate)
 
     def getName(self):
         """Returns the name of the level"""
@@ -43,11 +43,11 @@ class Level:
 
 # List of each of the levels in the game
 LEVELS = [
-    Level('Wave 1', 60, 20, 30, 2, 4, 2, 10),
-    Level('Wave 2', 80, 15, 35, 1, 6, 2, 9),
-    Level('Wave 3', 100, 15, 45, 1, 7, 3, 8),
-    Level('Wave 4', 120, 15, 45, 1, 7, 4, 7),
-    Level('Wave 5', 140, 15, 45, 1, 7, 4, 6),
-    Level('Final Wave', 999999999999, 15, 45, 1, 8, 5, 4)
+    Level('Wave 1', 60, (20, 30), (2, 4), 2, 10),
+    Level('Wave 2', 80, (15, 35), (1, 6), 2, 9),
+    Level('Wave 3', 100, (15, 45), (1, 7), 3, 8),
+    Level('Wave 4', 120, (15, 45), (1, 7), 4, 7),
+    Level('Wave 5', 140, (15, 45), (1, 7), 4, 6),
+    Level('Final Wave', 999999999999, (15, 45), (1, 8), 5, 4)
 ]
 

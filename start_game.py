@@ -3,20 +3,19 @@
 """
 
 import sys
-sys.path.append('./lib')
-
 import time
 import pygame
-import gametext
-import playership
-import astroid
-import explosion
-import playershot
-import powerup
-import gamelevels
+
+import lib.gametext as gametext
+import lib.playership as playership
+import lib.astroid as astroid
+import lib.explosion as explosion
+import lib.playershot as playershot
+import lib.powerup as powerup
+import lib.gamelevels as gamelevels
 
 from pygame.locals import *
-from gamewindow import *
+from lib.gamewindow import *
 
 def terminateGame():
     """Quits pygame and exits"""
@@ -237,7 +236,7 @@ while True:
 
         showLevelScreen(level.getName())
 
-        levelCount = 0
+        frameCounter = 0
 
         # Initialize lists of non-player sprites
         astroidList = []
@@ -249,12 +248,12 @@ while True:
         astroidSource = level.getAstroidField()
         powerupSource = level.getPowerupSource()
 
-        while levelCount < level.getDuration() and gameOver == False:
+        while frameCounter < level.getDuration() and gameOver == False:
         # main game loop runs continuously while the game is playing
 
             # Add new astroids, player shots, and powerups as needed
             shotList.extend(player.cycleWeapon())
-            if levelCount < level.getDuration() - level.getWashout():
+            if frameCounter < level.getDuration() - level.getWashout():
                 astroidList.extend(astroidSource.cycle())
                 powerupList.extend(powerupSource.cycle(player.getShields()))
 
@@ -289,7 +288,7 @@ while True:
                 break
 
             mainClock.tick(FRAMES_PER_SEC)
-            levelCount += 1
+            frameCounter += 1
 
     # Stop the game and show the "Game Over" screen.
     showGameOverScreen()

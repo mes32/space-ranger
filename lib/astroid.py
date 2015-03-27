@@ -16,11 +16,11 @@ ASTROID_IMAGE = pygame.image.load('./resources/images/astroid.png')
 class AstroidField:
     counter = 0
 
-    def __init__(self, minSize, maxSize, minSpeed, maxSpeed, sigmaDegrees, addRate):
-        self.minSize = minSize
-        self.maxSize = maxSize
-        self.minSpeed = minSpeed
-        self.maxSpeed = maxSpeed
+    def __init__(self, sizeRange, speedRange, sigmaDegrees, addRate):
+        self.minSize = sizeRange[0]
+        self.maxSize = sizeRange[1]
+        self.minSpeed = speedRange[0]
+        self.maxSpeed = speedRange[1]
         self.sigmaDegrees = sigmaDegrees
         self.addRate = addRate
 
