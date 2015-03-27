@@ -215,6 +215,8 @@ class PlayerShip:
         """Increases the spaceship's shields by a given amount"""
         self.shields += plus
 
+        self.shieldBlink = 3
+
         # Shields cannot excede 100% but give bonus to score
         if self.shields > 100:
             self.shields = 100
