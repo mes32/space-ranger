@@ -23,6 +23,10 @@ class PowerupSource:
     """
 
     counter = 0
+
+    #def __init__(self, player):
+    #    self.player = player
+
     def cycle(self, shields):
         PowerupSource.counter += 1
         if PowerupSource.counter == POWERUP_ADD_RATE:
@@ -42,11 +46,11 @@ class Powerup:
         self.ptype = ptype
 
         if ptype == 'shield':
-            self.surface = SHIELD_IMAGE
+            self.image = SHIELD_IMAGE
         else:
-            self.surface = CORE_IMAGE
+            self.image = CORE_IMAGE
 
-        powerupSize = self.surface.get_width()
+        powerupSize = self.image.get_width()
         self.rect = pygame.Rect(random.randint(0, WINDOW_WIDTH-powerupSize), 0 - powerupSize, powerupSize, powerupSize)
         self.speed = random.randint(POWERUP_SPEED_MIN, POWERUP_SPEED_MAX)
 
@@ -54,17 +58,9 @@ class Powerup:
         """Returns the powerup hitbox"""
         return self.rect
 
-    def getSize(self):
-        """Returns the powerup size (width/height always square)"""
-        return self.size
-
     def getSpeed(self):
         """Returns the speed the powerup moves down the screen at (***Probably not needed)"""
         return self.speed
-
-    def getMass(self):
-        """Returns the powerup mass (***Probably not needed)"""
-        return self.mass
 
     def move(self):
         """Moves the powerup down the screen for one frame"""
@@ -79,9 +75,28 @@ class Powerup:
 
     def draw(self, windowSurface):
         """Draws the powerup on the screen"""
-        windowSurface.blit(self.surface, self.rect)
+        windowSurface.blit(self.image, self.rect)
 
     def getType(self):
         """Returns the powerup type"""
         return self.ptype
+
+    #def effect(self, player):
+    # *** should replace getType
+
+class ShieldPowerup(Powerup):
+
+    def __init__(self):
+        self.image = SHIELD_IMAGE
+
+    #def effect(self, player):
+    # *** should replace getType
+
+class AstroidCore(Powerup):
+
+    def __init__(self):
+        self.image = CORE_IMAGE
+
+    #def effect(self, player):
+    # *** should replace getType
 
