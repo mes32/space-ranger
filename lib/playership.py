@@ -30,7 +30,7 @@ class PlayerShip:
         self.shieldBlink = 0
         self.score = 0
 
-        self.exhaust = playerexhaust.Exhaust()
+        self.exhaust = playerexhaust.Exhaust(self)
         self.movingLeft = self.movingRight = self.movingUp = self.movingDown = False
 
     def reset(self):
@@ -148,6 +148,12 @@ class PlayerShip:
         else:
             return False
 
+    def isMovingUp(self):
+        return self.movingUp
+
+    def isMovingDown(self):
+        return self.movingDown
+
     def mouseCursorFollow(self):
         """Repositions the mouse cursor to follow the player avatar"""
         pygame.mouse.set_pos(self.hitbox.centerx, self.hitbox.centery)
@@ -155,7 +161,8 @@ class PlayerShip:
     def draw(self, windowSurface):
         """Draws the player avatar on the screen with an up-to-date image"""
         self.updateImage()
-        self.exhaust.draw(windowSurface, self.hitbox, self.movingUp, self.movingDown)
+        if not self.destroyed:
+            self.exhaust.draw(windowSurface)
         windowSurface.blit(self.image, self.hitbox)
 
     def updateImage(self):

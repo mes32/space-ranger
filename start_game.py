@@ -285,6 +285,7 @@ while True:
                 if player.getScore() > topScore:
                     topScore = player.getScore() # set new top score
                 gameOver = True
+                drawFrame(windowSurface, player, topScore, astroidList, shotList, explosionList, powerupList)
                 break
 
             mainClock.tick(FRAMES_PER_SEC)

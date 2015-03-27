@@ -35,6 +35,9 @@ LONG_IMAGES_LIST = [
 class Exhaust:
     """Represents a stream of the player ship's exhaust"""
 
+    def __init__(self, player):
+        self.player = player
+
     def setImageShort(self):
         """Set exhaust image to a randomly selected short length flame"""
         randInd = random.randint(0, 5)
@@ -54,8 +57,12 @@ class Exhaust:
         self.hitbox = self.image.get_rect()
 
 
-    def draw(self, windowSurface, playerHitbox, movingUp, movingDown):
+    def draw(self, windowSurface):
         """Draw the exhaust relative to player's hitbox"""
+
+        playerHitbox = self.player.getHitbox()
+        movingUp = self.player.isMovingUp()
+        movingDown = self.player.isMovingDown()
 
         # Update flame image based on player's vertical motion
         if movingUp:
