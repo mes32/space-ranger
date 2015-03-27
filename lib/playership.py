@@ -24,7 +24,10 @@ class PlayerShip:
         self.image = PLAYER_IMAGE_STANDARD
         self.hitbox = self.image.get_rect()
         self.hitbox.topleft = ((WINDOW_WIDTH / 2) - self.hitbox.centerx, WINDOW_HEIGHT - 50)
-        self.selectedWeapon = playershot.PlasmaCannons()
+
+        self.plasmaCannons = playershot.PlasmaCannons(self)
+        self.railgun = playershot.Railgun(self)
+        self.selectedWeapon = self.plasmaCannons
 
         self.destroyed = False
         self.shields = 100
@@ -72,9 +75,11 @@ class PlayerShip:
             self.movingUp = False
             self.movingDown = True
         if event_key == ord('2'):
-            self.selectedWeapon = playershot.Railgun()
+            self.selectedWeapon = self.railgun
+            self.selectedWeapon.reset()
         if event_key == ord('1'):
-            self.selectedWeapon = playershot.PlasmaCannons()
+            self.selectedWeapon = self.plasmaCannons
+            self.selectedWeapon.reset()
 
     def keyupMove(self, event_key):
         """Updates player based on key up events"""
@@ -180,7 +185,7 @@ class PlayerShip:
             self.image = PLAYER_IMAGE_STANDARD
 
     def cycleWeapon(self):
-        return self.selectedWeapon.cycle(self.getHitbox())
+        return self.selectedWeapon.cycle()
 
     def getHitbox(self):
         """Returns the hitbox attribute for the player avatar"""

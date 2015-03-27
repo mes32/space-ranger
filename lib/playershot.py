@@ -14,53 +14,61 @@ RAILGUN_CYCLE_RATE = 12         # Rate of fire (one shot per 6 frames)
 RAILGUN_PROJECTILE_SPEED = 10   # Speed of shot movement (10 pixels per frame)
 RAILGUN_PROJECTILE_DAMAGE = 10  # Damage to astroids
 
-#class Weapon:
-#    """Represents the source of the player's fire.
-#
-#    Holds a counter that manages the spawning of new Projectile based on 
-#    rate. 
-#    """
-#
-#    def __init__(self):
-#
-#    counter = 0
-#    def cycle(self, playerHitbox):
-#        Railgun.counter += 1
-#        if Railgun.counter == PLASMA_CYCLE_RATE:
-#            Railgun.counter = 0
-#            return [PlasmaProjectile(playerHitbox)]
-#        else:
-#            return []
+class Weapon:
+    """Represents the source of the player's fire.
 
-class PlasmaCannons:
+    Holds a counter that manages the spawning of new Projectile based on 
+    rate. 
+    """
+
+    def __init__(self, player):
+        self.player = player
+        self.rateOfFire = 0
+        self.counter = 0
+
+    def reset(self):
+        self.counter = 0
+
+    def fire(self, playerHitbox):
+        return []
+
+    def cycle(self):
+        self.counter += 1
+        if self.counter == self.rateOfFire:
+            self.counter = 0
+            return self.fire(self.player.getHitbox())
+        else:
+            return []
+
+class PlasmaCannons(Weapon):
     """Represents the source of the player's fire (cannons).
 
     Holds a counter that manages the spawning of new PlasmaProjectile based on 
     PLASMA_CYCLE_RATE. 
     """
-    counter = 0
-    def cycle(self, playerHitbox):
-        PlasmaCannons.counter += 1
-        if PlasmaCannons.counter == PLASMA_CYCLE_RATE:
-            PlasmaCannons.counter = 0
-            return [PlasmaProjectile(playerHitbox, True), PlasmaProjectile(playerHitbox, False)]
-        else:
-            return []
 
-class Railgun:
+    def __init__(self, player):
+        self.player = player
+        self.rateOfFire = PLASMA_CYCLE_RATE
+        self.counter = 0
+
+    def fire(self, playerHitbox):
+        return [PlasmaProjectile.newLeft(playerHitbox), PlasmaProjectile.newRight(playerHitbox)]
+
+class Railgun(Weapon):
     """Represents the source of the player's fire (a railgun).
 
     Holds a counter that manages the spawning of new RailgunProjectile based on 
     RAILGUN_CYCLE_RATE. 
     """
-    counter = 0
-    def cycle(self, playerHitbox):
-        Railgun.counter += 1
-        if Railgun.counter == RAILGUN_CYCLE_RATE:
-            Railgun.counter = 0
-            return [RailgunProjectile(playerHitbox)]
-        else:
-            return []
+
+    def __init__(self, player):
+        self.player = player
+        self.rateOfFire = RAILGUN_CYCLE_RATE
+        self.counter = 0
+
+    def fire(self, playerHitbox):
+        return [RailgunProjectile(playerHitbox)]
 
 class Projectile:
     """Represents projectiles fired by the player"""
@@ -68,8 +76,8 @@ class Projectile:
     def __init__(self, playerHitbox):
         self.rect = pygame.Rect(playerHitbox.centerx-3, playerHitbox.centery-12, 5, 16)
         self.image = RAILGUN_PROJECTILE_IMAGE
-        self.damage = RAILGUN_PROJECTILE_DAMAGE
-        self.speed = RAILGUN_PROJECTILE_SPEED
+        self.damage = 0
+        self.speed = 0
 
     def getRect(self):
         """Returns the hitbox for this projectile"""
@@ -105,6 +113,16 @@ class PlasmaProjectile(Projectile):
         self.image = PLASMA_PROJECTILE_IMAGE
         self.damage = PLASMA_PROJECTILE_DAMAGE
         self.speed = PLASMA_PROJECTILE_SPEED
+
+    @staticmethod
+    def newLeft(playerHitbox):
+        """Creates a new projectile to the left of the player"""
+        return PlasmaProjectile(playerHitbox, True)
+
+    @staticmethod
+    def newRight(playerHitbox):
+        """Creates a new projectile to the right of the player"""
+        return PlasmaProjectile(playerHitbox, False)
 
 class RailgunProjectile(Projectile):
     """Represents the projectiles fired by the Railgun class"""
