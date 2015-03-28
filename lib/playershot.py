@@ -27,18 +27,23 @@ class Weapon:
         self.counter = 0
 
     def reset(self):
+        """Resets the weapon firing counter (needed when changing weapons)"""
         self.counter = 0
 
     def fire(self, playerHitbox):
+        """Creates a new projectile relative to the player's hitbox"""
         return []
 
     def cycle(self):
-        self.counter += 1
-        if self.counter == self.rateOfFire:
-            self.counter = 0
+        """Cycles the weapon firing (creating new projectiles) as needed"""
+
+        if self.counter % self.rateOfFire == 0:
+            self.counter = 1
             return self.fire(self.player.getHitbox())
         else:
+            self.counter += 1
             return []
+
 
 class PlasmaCannons(Weapon):
     """Represents the source of the player's fire (cannons).
@@ -53,6 +58,7 @@ class PlasmaCannons(Weapon):
         self.counter = 0
 
     def fire(self, playerHitbox):
+        """Creates a new PlasmaProjectile relative to the player's hitbox"""
         return [PlasmaProjectile.newLeft(playerHitbox), PlasmaProjectile.newRight(playerHitbox)]
 
 class Railgun(Weapon):
@@ -68,6 +74,7 @@ class Railgun(Weapon):
         self.counter = 0
 
     def fire(self, playerHitbox):
+        """Creates a new RailgunProjectile relative to the player's hitbox"""
         return [RailgunProjectile(playerHitbox)]
 
 class Projectile:
