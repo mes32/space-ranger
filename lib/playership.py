@@ -225,7 +225,6 @@ class PlayerShip:
         # Shields cannot excede 100% but give bonus to score
         if self.shields > 100:
             self.shields = 100
-            self.score += 10
 
     def isDestroyed(self):
         """Indicates whether the player's spaceship has been destroyed"""

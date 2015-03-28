@@ -181,10 +181,7 @@ def checkCollisions(player, astroidList, shotList, powerupList):
     for p in powerupList:
         if p.getRect().colliderect(player.getHitbox()):
             powerupList.remove(p)
-            if (p.getType() == 'shield'):
-                player.addShields(25)
-            elif (p.getType() == 'plus'):
-                player.addScore(30)
+            p.effectPlayer(player)
 
     # Check if any shots have hit astroids
     for s in shotList:

@@ -24,43 +24,32 @@ class PowerupSource:
 
     counter = 0
 
-    #def __init__(self, player):
-    #    self.player = player
-
     def cycle(self, shields):
         PowerupSource.counter += 1
         if PowerupSource.counter == POWERUP_ADD_RATE:
+
             PowerupSource.counter = 0
+            speed = random.randint(POWERUP_SPEED_MIN, POWERUP_SPEED_MAX)
             powerUpType = random.randint(0,4)
             if powerUpType == 1 or (shields < 30 and (powerUpType == 2 or powerUpType == 3)):
-                return [Powerup('shield')]
+
+                powerupSize = SHIELD_IMAGE.get_width()
+                rect = pygame.Rect(random.randint(0, WINDOW_WIDTH-powerupSize), 0 - powerupSize, powerupSize, powerupSize)
+                return [ShieldPowerup(rect, speed)]
             else:
-                return [Powerup('plus')]
+
+                powerupSize = CORE_IMAGE.get_width()
+                rect = pygame.Rect(random.randint(0, WINDOW_WIDTH-powerupSize), 0 - powerupSize, powerupSize, powerupSize)
+                return [AstroidCore(rect, speed)]
         else:
             return []
 
 class Powerup:
-    """Represents the powerups the player may collect"""
-
-    def __init__(self, ptype):
-        self.ptype = ptype
-
-        if ptype == 'shield':
-            self.image = SHIELD_IMAGE
-        else:
-            self.image = CORE_IMAGE
-
-        powerupSize = self.image.get_width()
-        self.rect = pygame.Rect(random.randint(0, WINDOW_WIDTH-powerupSize), 0 - powerupSize, powerupSize, powerupSize)
-        self.speed = random.randint(POWERUP_SPEED_MIN, POWERUP_SPEED_MAX)
+    """Represents a powerup the player may collect"""
 
     def getRect(self):
         """Returns the powerup hitbox"""
         return self.rect
-
-    def getSpeed(self):
-        """Returns the speed the powerup moves down the screen at (***Probably not needed)"""
-        return self.speed
 
     def move(self):
         """Moves the powerup down the screen for one frame"""
@@ -77,26 +66,32 @@ class Powerup:
         """Draws the powerup on the screen"""
         windowSurface.blit(self.image, self.rect)
 
-    def getType(self):
-        """Returns the powerup type"""
-        return self.ptype
-
-    #def effect(self, player):
-    # *** should replace getType
-
 class ShieldPowerup(Powerup):
+    """Represents a shield recharge powerup"""
 
-    def __init__(self):
+    def __init__(self, rect, speed):
         self.image = SHIELD_IMAGE
+        self.rect = rect
+        self.speed = speed
 
-    #def effect(self, player):
-    # *** should replace getType
+    def effectPlayer(self, player):
+        """Deals this powerup effect to the player when picked up (shields +25)"""
+
+        if player.getShields() > 75:
+            player.addScore(10)
+
+        player.addShields(25)
 
 class AstroidCore(Powerup):
+    """Represents a score increase powerup"""
 
-    def __init__(self):
+    def __init__(self, rect, speed):
         self.image = CORE_IMAGE
+        self.rect = rect
+        self.speed = speed
 
-    #def effect(self, player):
-    # *** should replace getType
+    def effectPlayer(self, player):
+        """Deals this powerup effect to the player when picked up (score +30)"""
+        player.addScore(30)
+
 
