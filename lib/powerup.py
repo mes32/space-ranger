@@ -25,12 +25,14 @@ class PowerupSource:
     counter = 0
 
     def cycle(self, shields):
-        PowerupSource.counter += 1
-        if PowerupSource.counter == POWERUP_ADD_RATE:
+        """Create new powerups as needed"""
+
+        PowerupSource.counter += random.randint(0, 2)
+        if PowerupSource.counter >= POWERUP_ADD_RATE:
 
             PowerupSource.counter = 0
             speed = random.randint(POWERUP_SPEED_MIN, POWERUP_SPEED_MAX)
-            powerUpType = random.randint(0,4)
+            powerUpType = random.randint(0, 4)
             if powerUpType == 1 or (shields < 30 and (powerUpType == 2 or powerUpType == 3)):
 
                 powerupSize = SHIELD_IMAGE.get_width()

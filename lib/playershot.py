@@ -5,12 +5,12 @@
 import pygame
 
 PLASMA_PROJECTILE_IMAGE = pygame.image.load('./resources/images/plasmaShot.png')
-PLASMA_CYCLE_RATE = 4         # Rate of fire (one shot per 6 frames)
-PLASMA_PROJECTILE_SPEED = 7   # Speed of shot movement (10 pixels per frame)
+PLASMA_CYCLE_RATE = 4         # Rate of fire (one shot per 4 frames)
+PLASMA_PROJECTILE_SPEED = 7   # Speed of shot movement (7 pixels per frame)
 PLASMA_PROJECTILE_DAMAGE = 2  # Damage to astroids
 
 RAILGUN_PROJECTILE_IMAGE = pygame.image.load('./resources/images/railgunShot.png')
-RAILGUN_CYCLE_RATE = 12         # Rate of fire (one shot per 6 frames)
+RAILGUN_CYCLE_RATE = 12         # Rate of fire (one shot per 12 frames)
 RAILGUN_PROJECTILE_SPEED = 10   # Speed of shot movement (10 pixels per frame)
 RAILGUN_PROJECTILE_DAMAGE = 10  # Damage to astroids
 
