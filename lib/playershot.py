@@ -17,8 +17,7 @@ RAILGUN_PROJECTILE_DAMAGE = 10  # Damage to astroids
 class Weapon:
     """Represents the source of the player's fire.
 
-    Holds a counter that manages the spawning of new Projectile based on 
-    rate. 
+    Holds a counter that manages the spawning of new Projectile based on rate. 
     """
 
     def __init__(self, player):

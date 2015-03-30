@@ -5,31 +5,52 @@
 import random
 import pygame
 
-SHORT_IMAGES_LIST = [
-    pygame.image.load('./resources/images/exhaustShortA.png'), 
-    pygame.image.load('./resources/images/exhaustShortB.png'), 
-    pygame.image.load('./resources/images/exhaustShortC.png'), 
-    pygame.image.load('./resources/images/exhaustShortD.png'), 
-    pygame.image.load('./resources/images/exhaustShortE.png'), 
-    pygame.image.load('./resources/images/exhaustShortF.png')
+IMAGE_LONG_100_A = pygame.image.load('./resources/images/exhaustLong_100.png')
+IMAGE_LONG_100_B = pygame.transform.flip(IMAGE_LONG_100_A, True, False)
+IMAGE_LONG_85_A  = pygame.image.load('./resources/images/exhaustLong_85.png')
+IMAGE_LONG_85_B  = pygame.transform.flip(IMAGE_LONG_85_A, True, False)
+IMAGE_LONG_65_A  = pygame.image.load('./resources/images/exhaustLong_65.png')
+IMAGE_LONG_65_B  = pygame.transform.flip(IMAGE_LONG_65_A, True, False)
+
+IMAGE_MEDIUM_100_A = pygame.transform.scale(IMAGE_LONG_100_A, (8, 18))
+IMAGE_MEDIUM_100_B = pygame.transform.scale(IMAGE_LONG_100_B, (8, 18))
+IMAGE_MEDIUM_85_A  = pygame.transform.scale(IMAGE_LONG_85_A,  (8, 18))
+IMAGE_MEDIUM_85_B  = pygame.transform.scale(IMAGE_LONG_85_B,  (8, 18))
+IMAGE_MEDIUM_65_A  = pygame.transform.scale(IMAGE_LONG_65_A,  (8, 18))
+IMAGE_MEDIUM_65_B  = pygame.transform.scale(IMAGE_LONG_65_B,  (8, 18))
+
+IMAGE_SHORT_100_A = pygame.transform.scale(IMAGE_LONG_100_A, (9, 10))
+IMAGE_SHORT_100_B = pygame.transform.scale(IMAGE_LONG_100_B, (9, 10))
+IMAGE_SHORT_85_A  = pygame.transform.scale(IMAGE_LONG_85_A,  (9, 10))
+IMAGE_SHORT_85_B  = pygame.transform.scale(IMAGE_LONG_85_B,  (9, 10))
+IMAGE_SHORT_65_A  = pygame.transform.scale(IMAGE_LONG_65_A,  (9, 10))
+IMAGE_SHORT_65_B  = pygame.transform.scale(IMAGE_LONG_65_B,  (9, 10))
+
+LONG_IMAGES_LIST = [
+    IMAGE_LONG_100_A,
+    IMAGE_LONG_100_B,
+    IMAGE_LONG_85_A,
+    IMAGE_LONG_85_B,
+    IMAGE_LONG_65_A,
+    IMAGE_LONG_65_B
 ]
 
 MEDIUM_IMAGES_LIST = [
-    pygame.image.load('./resources/images/exhaustMediumA.png'), 
-    pygame.image.load('./resources/images/exhaustMediumB.png'), 
-    pygame.image.load('./resources/images/exhaustMediumC.png'), 
-    pygame.image.load('./resources/images/exhaustMediumD.png'), 
-    pygame.image.load('./resources/images/exhaustMediumE.png'), 
-    pygame.image.load('./resources/images/exhaustMediumF.png')
+    IMAGE_MEDIUM_100_A,
+    IMAGE_MEDIUM_100_B,
+    IMAGE_MEDIUM_85_A,
+    IMAGE_MEDIUM_85_B,
+    IMAGE_MEDIUM_65_A,
+    IMAGE_MEDIUM_65_B
 ]
 
-LONG_IMAGES_LIST = [
-    pygame.image.load('./resources/images/exhaustLongA.png'), 
-    pygame.image.load('./resources/images/exhaustLongB.png'), 
-    pygame.image.load('./resources/images/exhaustLongC.png'), 
-    pygame.image.load('./resources/images/exhaustLongD.png'), 
-    pygame.image.load('./resources/images/exhaustLongE.png'), 
-    pygame.image.load('./resources/images/exhaustLongF.png')
+SHORT_IMAGES_LIST = [
+    IMAGE_SHORT_100_A,
+    IMAGE_SHORT_100_B,
+    IMAGE_SHORT_85_A,
+    IMAGE_SHORT_85_B,
+    IMAGE_SHORT_65_A,
+    IMAGE_SHORT_65_B
 ]
 
 class Exhaust:
