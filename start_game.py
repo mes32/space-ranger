@@ -256,17 +256,10 @@ while True:
 
             # Listen for keyboard and mouse inputs
             for event in pygame.event.get():
-                if event.type == QUIT:
+                if event.type == QUIT or event.type == KEYUP and event.key == K_ESCAPE:
                     terminateGame()
-                if event.type == KEYDOWN:
-                    player.keydownMove(event.key)
-                if event.type == KEYUP:
-                    if event.key == K_ESCAPE:
-                        terminateGame()
-                    else:
-                        player.keyupMove(event.key)
-                if event.type == MOUSEMOTION:
-                    player.mouseMove(event)
+                else:
+                    player.handle(event)
 
             # Move and update all game elements/sprites
             moveAll(player, astroidList, shotList, explosionList, powerupList)

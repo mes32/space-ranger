@@ -35,7 +35,11 @@ class PlayerShip:
         self.score = 0
 
         self.exhaust = playerexhaust.Exhaust(self)
+        self.moveLeft = self.moveRight = self.moveUp = self.moveDown = False
         self.movingLeft = self.movingRight = self.movingUp = self.movingDown = False
+        self.mouseMovingLeft = self.mouseMovingRight = self.mouseMovingUp = self.mouseMovingDown = False
+
+        self.mouseX = self.mouseY = 0
 
     def reset(self):
         """Resets the location and image"""
@@ -44,36 +48,74 @@ class PlayerShip:
         self.hitbox.topleft = (WINDOW_WIDTH / 2, WINDOW_HEIGHT - 50)
         self.shieldBlink = 0
         self.movingLeft = self.movingRight = self.movingUp = self.movingDown = False
+        self.mouseMovingLeft = self.mouseMovingRight = self.mouseMovingUp = self.mouseMovingDown = False
+
+    def handle(self, event):
+        if event.type == MOUSEMOTION:
+            self.mouseMove()
+        elif event.type == KEYDOWN:
+            self.keydownMove(event.key)
+        elif event.type == KEYUP:
+            self.keyupMove(event.key)
 
     def move(self):
         """Moves the location of the player based on movement inputs, keeping them in the bounds of the screen"""
 
-        if self.movingLeft and not self.onLeftEdge():
+        self.moveLeft = self.moveRight = self.moveUp = self.moveDown = False
+
+        if self.movingLeft:
+            self.moveLeft = True
+        elif self.movingRight:
+            self.moveRight = True
+        if self.movingUp:
+            self.moveUp = True
+        elif self.movingDown:
+            self.moveDown = True
+
+        self.updateMouse()
+        if self.mouseMovingLeft and self.mouseX < self.hitbox.centerx:
+            self.moveLeft = True
+        elif self.mouseMovingRight and self.mouseX > self.hitbox.centerx:
+            self.moveRight = True
+        if self.mouseMovingUp and self.mouseY < self.hitbox.centery:
+            self.moveUp = True
+        elif self.mouseMovingDown and self.mouseY > self.hitbox.centery:
+            self.moveDown = True
+
+        if self.moveLeft and not self.onLeftEdge():
             self.hitbox.move_ip(-1 * PLAYER_SPEED, 0)
-        elif self.movingRight and not self.onRightEdge():
+        elif self.moveRight and not self.onRightEdge():
             self.hitbox.move_ip(PLAYER_SPEED, 0)
 
-        if self.movingUp and not self.onTopEdge():
+        if self.moveUp and not self.onTopEdge():
             self.hitbox.move_ip(0, -1 * PLAYER_SPEED)
-        elif self.movingDown and not self.onBottomEdge():
+        elif self.moveDown and not self.onBottomEdge():
             self.hitbox.move_ip(0, PLAYER_SPEED)
 
-        self.mouseCursorFollow()
+        #self.mouseCursorFollow()
 
     def keydownMove(self, event_key):
         """Updates player based on key down events"""
         if event_key == K_LEFT or event_key == ord('a'):
+            self.mouseMovingLeft = self.mouseMovingRight = self.mouseMovingUp = self.mouseMovingDown = False
             self.movingRight = False
             self.movingLeft = True
+            #self.mouseCursorFollow()
         if event_key == K_RIGHT or event_key == ord('d'):
+            self.mouseMovingLeft = self.mouseMovingRight = self.mouseMovingUp = self.mouseMovingDown = False
             self.movingLeft = False
             self.movingRight = True
+            #self.mouseCursorFollow()
         if event_key == K_UP or event_key == ord('w'):
+            self.mouseMovingLeft = self.mouseMovingRight = self.mouseMovingUp = self.mouseMovingDown = False
             self.movingDown = False
             self.movingUp = True
+            #self.mouseCursorFollow()
         if event_key == K_DOWN or event_key == ord('s'):
+            self.mouseMovingLeft = self.mouseMovingRight = self.mouseMovingUp = self.mouseMovingDown = False
             self.movingUp = False
             self.movingDown = True
+            #self.mouseCursorFollow()
         if event_key == ord('2'):
             self.selectedWeapon = self.railgun
             self.selectedWeapon.reset()
@@ -92,39 +134,33 @@ class PlayerShip:
         if event_key == K_DOWN or event_key == ord('s'):
             self.movingDown = False
 
-    def mouseMove(self, event):
+    def mouseMove(self):
         """Move the avatar on the screen based on mouse movement events"""
-        mouseX = event.pos[0]
-        mouseY = event.pos[1]
-        self.hitbox.move_ip(mouseX - self.hitbox.centerx, mouseY - self.hitbox.centery)
 
-        # Keep avatar inside the bounds of the screen
-        if self.onTopEdge():
-            height = self.hitbox.height
-            self.hitbox.top = 0
-            self.hitbox.bottom = height
-        elif self.onBottomEdge():
-            height = self.hitbox.height
-            self.hitbox.bottom = WINDOW_HEIGHT
-            self.hitbox.top = WINDOW_HEIGHT - height
+        self.updateMouse()
 
-        if self.onLeftEdge():
-            width = self.hitbox.width
-            self.hitbox.left = 0
-            self.hitbox.right = width
-        elif self.onRightEdge():
-            width = self.hitbox.width
-            self.hitbox.right = WINDOW_WIDTH
-            self.hitbox.left = WINDOW_WIDTH - width
+        if self.mouseY == self.hitbox.centery:
+            self.mouseMovingUp = False
+            self.mouseMovingDown = False
+        elif self.mouseY < self.hitbox.centery:
+            self.mouseMovingUp = True
+            self.mouseMovingDown = False
+        elif self.mouseY > self.hitbox.centery:
+            self.mouseMovingUp = False
+            self.mouseMovingDown = True
 
-        # Set movement for puposes of exhaust animation
-        #if mouseY == self.hitbox.centery:
-        #    self.movingUp = False
-        #    self.movingDown = False
-        #if mouseY > self.hitbox.centery:
-        #    self.movingUp = True
-        #elif mouseY < self.hitbox.centery:
-        #    self.movingDown = True
+        if self.mouseX == self.hitbox.centerx:
+            self.mouseMovingRight = False
+            self.mouseMovingLeft = False
+        elif self.mouseX > self.hitbox.centerx:
+            self.mouseMovingRight = True
+            self.mouseMovingLeft = False
+        elif self.mouseX < self.hitbox.centerx:
+            self.mouseMovingRight = False
+            self.mouseMovingLeft = True
+
+    def updateMouse(self):
+        (self.mouseX, self.mouseY) = pygame.mouse.get_pos()
 
     def onLeftEdge(self):
         """Return True if the avatar is not past the leftward edge of the screen"""
@@ -155,10 +191,12 @@ class PlayerShip:
             return False
 
     def isMovingUp(self):
-        return self.movingUp
+        """Returns true if the avatar is moving up the screen"""
+        return self.moveUp
 
     def isMovingDown(self):
-        return self.movingDown
+        """Returns true if the avatar is moving down the screen"""
+        return self.moveDown
 
     def mouseCursorFollow(self):
         """Repositions the mouse cursor to follow the player avatar"""
@@ -166,6 +204,15 @@ class PlayerShip:
 
     def draw(self, windowSurface):
         """Draws the player avatar on the screen with an up-to-date image"""
+
+        cursor = pygame.Rect(0, 0, 5, 5)
+        cursorColor = pygame.Color(155, 155, 155, 0)
+        cursor.centerx = self.mouseX
+        cursor.centery = self.mouseY
+
+        if self.mouseMovingLeft or self.mouseMovingRight or self.mouseMovingUp or self.mouseMovingDown:
+            pygame.draw.rect(windowSurface, cursorColor, cursor, 2)
+
         self.updateImage()
         if not self.destroyed:
             self.exhaust.draw(windowSurface)
