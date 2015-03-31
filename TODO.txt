@@ -1,0 +1,28 @@
+Cleanup level exit (to make a pseudo-cutsceen)
+Add attractor item
+Update README
+Add warmup period to cannons and possibly the attractor item
+Upgrade art resources
+    - explosion
+    - exhaust
+    - plasma projectile
+    - astroid
+        - rock
+        - ice
+        - iron
+        - transparent
+Update README
+Update wiki?
+Make a github version branch?
+Post to pygame.org
+If there is feedback address and re-post
+Add new astroid sub-classes
+    - including medly classes that randomly select from all the other types
+Build more levels using these different types of astroids
+Make astroid hit box a hit radius?
+Add particle effects when astroids are damaged (or railgun fires? or attractor runs?)
+Pack it up with pyinstaller
+Update README
+Make a github version branch?
+Post to pygame.org
+Call it done
