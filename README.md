@@ -1,5 +1,5 @@
 # space-ranger
-Vertical scrolling shooter (shmup) in space/pygame
+Vertical scrolling shooter with a space theme. Uses pygame.
 
 ![Screen Shot](./screenshots/screenshot_001.png)
 

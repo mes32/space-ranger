@@ -1,7 +1,9 @@
 Cleanup level exit (to make a pseudo-cutsceen)
+Save high scores (possibly using pickle?)
 Add attractor item
+Add powerup that doubles rate of fire and doubles attractor strength (for lets say a duration of 20secs)
 Update README
-Add warmup period to cannons and possibly the attractor item
+Add warmup period to cannons and possibly the attractor (when switching the equipped item)
 Upgrade art resources
     - explosion
     - exhaust
@@ -26,3 +28,9 @@ Update README
 Make a github version branch?
 Post to pygame.org
 Call it done
+
+
+Different classes of ships
+Some semblance of a story (motivation what are doing in an astroid field)
+More color
+
