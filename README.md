@@ -21,9 +21,9 @@ Launch the start_game.py script with Python:
 `python start_game.py`
 
 ## About the Game
-This game is currently a single infinite level. While it lacks much depth of play, it can be pretty fun in small doses. It is possibly a good diversion during a coffee break.
+This game has six progressively more difficult levels. Evade asteroids as long as you can. Collect the greenish gems to increase your score. Shield powerups will replenish some of your spaceship's shields. Your highest score achieved is tracked, but this does not persist from one program session to the next.
 
-Evade asteroids as long as you can. Collect the greenish gems to increase your score. Shield powerups will replenish some of your spaceship's shields. Your highest score achieved is tracked, but this does not persist from one program session to the next.
+Steer with the direction keys, WADS, or the mouse. Select from two types of weapons using the 1 and 2 keys. The escape key exits the program. 
 
 ## Licence
 Copyright 2015 Michael Stockman. Some rights reserved.
