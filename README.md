@@ -25,7 +25,7 @@ This game has six progressively more difficult levels. Evade asteroids as long a
 
 Steer with the direction keys, WADS, or the mouse. Select from two types of weapons using the 1 and 2 keys. The escape key exits the program. 
 
-## Licence
+## License
 Copyright 2015 Michael Stockman. Some rights reserved.
 
 The code portion of space-ranger is licensed under a [Creative Commons Attribution-Noncommercial-Share Alike 4.0 United States
